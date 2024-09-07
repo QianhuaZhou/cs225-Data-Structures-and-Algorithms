@@ -48,7 +48,7 @@ TEST_CASE("Image darken(0.2) darkens pixels by 0.2", "[weight=1][part=1]") {
   
   Image result = createRainbowImage();
   result.darken(0.2);
-
+  //std::cout << img.getPixel(50, 50).l << std::endl;
   REQUIRE( img.getPixel(50, 50).l - 0.2 == result.getPixel(50, 50).l );
 }
 

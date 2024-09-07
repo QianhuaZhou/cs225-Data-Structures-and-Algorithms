@@ -18,11 +18,25 @@ class StickerSheet
 private:
   // Add private variables and helper functions as needed, here.
   // You MUST use a vector to store the sticker layers
+  
+
 public:
+  //unsigned getMaxLayers(){return maxLayers_;}
+  //Image& getBasePicture(){return basePicture_;}
+  std::vector<Image*> stickers_; 
+  std::vector<std::pair<int, int>> positions_; 
+  Image basePicture_; 
+  unsigned maxLayers_; //start from 1, to size(stickers_)
+  //std::vector<Image*>& stickers(){return stickers_;} 
+  //std::vector<std::pair<int, int>>& positions(){return positions_;}
+  
+
+  Image& gainNewBase() const;
   /**
    * Add any constructors/destructors you may need based on your
    * class design for StickerSheet.
    */
+   StickerSheet();//have to implement, or linkint error
 
   /**
    * Initializes this StickerSheet with a deep copy of the base picture.

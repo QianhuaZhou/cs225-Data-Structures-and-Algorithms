@@ -12,6 +12,14 @@ static void checkStickerPlacement(const Image& sticker, const Image& sheet, cons
     for (size_t y = 0; y < sticker.height(); ++y) {
       const HSLAPixel &stickerPixel = sticker.getPixel(x, y);
       const HSLAPixel &sheetPixel = sheet.getPixel(x + xOffset, y + yOffset);
+       //if (stickerPixel.a == 1 && stickerPixel != sheetPixel) {
+        /*std::cout << "Mismatch at (" << x << ", " << y << "): "
+                  << "Sticker pixel (" << stickerPixel.h << ", " << stickerPixel.s << ", " << stickerPixel.l << ", " << stickerPixel.a << ") "
+                  << "Sheet pixel (" << sheetPixel.h << ", " << sheetPixel.s << ", " << sheetPixel.l << ", " << sheetPixel.a << ")" 
+                  << std::endl;
+                  */
+      //}
+      //std::cout << std::to_string(stickerPixel == sheetPixel) << " ";
       REQUIRE( (stickerPixel.a == 1 ? stickerPixel == sheetPixel : true) );
     }
   }
@@ -25,12 +33,13 @@ TEST_CASE("A basic StickerSheet works", "[weight=5][part=2][valgrind][timeout=30
   REQUIRE( sheet.layers() == 0);
   
   sheet.addSticker(i, 20, 200);
-
+  //std::cout << "the result of sheet.addSticker(i, 20, 200)" << sheet.addSticker(i, 20, 200) << std::endl;
   REQUIRE( sheet.layers() == 1);
-
   Image expected;
   expected.readFromFile("../data/expected.png");
-
+  //std::cout << "For expected, width = " << expected.width() << "  height = " << expected.height() << std::endl;
+  //Image& output = sheet.render();
+  //std::cout << "For my sheet, width = " << output.width() << "  height = " << output.height() << std::endl;
   REQUIRE( sheet.render() == expected );
 }
 
@@ -58,12 +67,11 @@ TEST_CASE("StickerSheet behaves correctly when a sticker is updated", "[weight=5
   Image alma;    alma.readFromFile("../data/alma.png");
   Image i;       i.readFromFile("../data/i.png");
   Image penguin; penguin.readFromFile("../data/penguin.png");
-
   StickerSheet sheet(alma);
   sheet.addSticker(i, 20, 200);
-
+  //std::cout << "line 65" << std::endl;
   i = penguin;
-
+  //std::cout << "line 67" << std::endl;
   checkStickerPlacement(penguin, sheet.render(), 20, 200);
 }
 
@@ -317,6 +325,7 @@ TEST_CASE("A StickerSheet with stickers at negative coordinates works", "[weight
   REQUIRE( render == expected );
 }
 
+
 TEST_CASE("A StickerSheet with stickers placed beyond base image boundaries works", "[weight=5][part=2][valgrind][timeout=30000]") {
   Image alma; alma.readFromFile("../data/alma.png");
   Image i;    i.readFromFile("../data/i.png");
@@ -334,13 +343,17 @@ TEST_CASE("A StickerSheet with stickers placed beyond base image boundaries work
     StickerSheet sheetDuplicate(almaDuplicate);
     sheet = sheetDuplicate;
   }
-
+ 
+  
+  //std::cout << "For alma, alma.width = " << alma.width() << " alma.height = " << alma.height() << std::endl;
+  //std::cout << "For i, i.width = " << i.width() << " i.height = " << i.height() << std::endl;
   sheet.addSticker(i, 800, 200);
   sheet.addSticker(i, 50, 500);
 
   sheet.removeSticker(1);
 
   const Image &renderXBound = sheet.render();
+  //std::cout << "For renderXBound, width = " << renderXBound.width() << "  height = " << renderXBound.height() << std::endl();
 
   REQUIRE( renderXBound.width() == i.width() + 800 );
   REQUIRE( renderXBound.height() == alma.height() );
@@ -359,13 +372,14 @@ TEST_CASE("A StickerSheet with stickers placed beyond base image boundaries work
   REQUIRE( renderYBound.height() == i.height() + 500 );
 
   checkStickerPlacement(i, renderYBound, 20, 500);
-
   sheet.removeSticker(0);
-
+  //td::cout << "At line 376, position" << std::to_string(sheet.positions_[0].first)  << " second : " << std::to_string(sheet.positions_[0].second)  <<  " height= " << sheet.stickers_[0]->height() << std::endl;
+  //<< "   " << std::to_string(*stickers_[0])
   REQUIRE( sheet.render() == alma );
 
   sheet.addSticker(i, 800, 200);
   sheet.addSticker(i, -100, -500);
+  //std::cout << "line 396" << std::endl;
 
   const Image &renderXYBound = sheet.render();
 

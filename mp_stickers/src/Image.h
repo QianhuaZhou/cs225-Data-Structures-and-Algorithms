@@ -24,6 +24,9 @@ class Image : public cs225::PNG {
       */
     Image(unsigned int width, unsigned int height) : PNG(width, height) {}
 
+    //self-define
+    //double changeLuminance(double curr_l, double amount);
+
     /**
      * Lighten an Image by increasing the luminance of every pixel by 0.1.
      * This function ensures that the luminance remains in the range [0, 1].
