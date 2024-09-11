@@ -230,6 +230,12 @@ void Image::scale(double factor){
  * @param h Desired height of the scaled Image
 **/
 void Image::scale(unsigned w, unsigned h){
-    double factor = std::min(w/width(), h/height());
+    double widthFactor = static_cast<double>(w) / width();
+    double heightFactor = static_cast<double>(h) / height();
+
+    // Choose the smaller factor to maintain aspect ratio
+    double factor = std::min(widthFactor, heightFactor);
+
+    // Call the scaling function with the calculated factor
     scale(factor);
 }
