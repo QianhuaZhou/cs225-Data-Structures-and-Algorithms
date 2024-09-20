@@ -1,20 +1,12 @@
 #include "Image.h"
 using namespace cs225;
-/*
-double Image::changeLuminance(double curr_l, double amount){
-    if(curr_l + amount > 1.0) return 1.0;
-    if(curr_l + amount < 0.0) return 0.0;
-    return curr_l + amount;
-}
-*/
+
 
 /**
  * Lighten an Image by increasing the luminance of every pixel by 0.1.
  * This function ensures that the luminance remains in the range [0, 1].
 **/
 void Image::lighten(){
-    /*unsigned index = x + (y * width_);
-    return imageData_[index];*/
     for(unsigned int x = 0; x < width(); ++x){
         for(unsigned int y = 0; y < height(); ++y){//first row, then column
            HSLAPixel & pixel_ = getPixel(x, y);

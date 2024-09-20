@@ -2,8 +2,6 @@
 using namespace cs225;
   StickerSheet::StickerSheet(){
     maxLayers_ = 0;
-    //stickers_.resize(0);
-    //positions_.resize(0);
   }
 /*
 **
@@ -14,9 +12,6 @@ using namespace cs225;
   StickerSheet::StickerSheet(const Image& picture){
     basePicture_ = picture;
     maxLayers_ = 0;
-    //stickers_.resize(1);
-    //positions_.resize(1);
-
   }
 
   /**
@@ -35,7 +30,6 @@ using namespace cs225;
    * @return The zero-based layer index the sticker was added to.
    */
   int StickerSheet::addSticker(Image& sticker, int x, int y){
-    std::cout << "In addSticker(), maxLayers_= " << maxLayers_ << std::endl;
     if(maxLayers_ != 0){
       for(unsigned int i = 0; i < maxLayers_; ++i){
       if(stickers_[i] == nullptr){
@@ -122,9 +116,6 @@ using namespace cs225;
         return;
     }
 
-    // Free the memory at the specified index
-    //delete stickers_[index];
-
     // Set the sticker pointer to nullptr instead of erasing
     stickers_[index] = nullptr;
 
@@ -135,18 +126,7 @@ using namespace cs225;
     // Decrement maxLayers_ if the sticker was at the highest layer
     if (index == maxLayers_ - 1) {
         maxLayers_--;
-        /*
-        while (maxLayers_ > 0 && stickers_[maxLayers_ - 1] == nullptr) {
-            maxLayers_--;  // Adjust maxLayers_ to the highest valid layer
-        }
-        */
-        
     }
-
-    std::cout << "=================================" << std::endl;
-    std::cout <<  "stickers_.size(): " << stickers_.size() << std::endl;
-    std::cout << "Removed sticker at index: " << index << std::endl;
-    std::cout << "maxLayers_ = " << maxLayers_ << std::endl;
 }
 
 
@@ -210,19 +190,13 @@ using namespace cs225;
       
       int width_ = sticker->width();
       int height_ = sticker->height();
-      //std::cout << "line 169 sticker->height() = " << sticker->height() << std::endl;
       basePosPlus.first = std::max(basePosPlus.first, x_cor + width_);
       basePosPlus.second = std::max(basePosPlus.second, y_cor + height_);
       if(basePosPlus.second == 827){
-        //std::cout << "At line 202, height_ = " << height_ << std::endl;
-        //std::cout << "At line 203, y_cor = " << y_cor << std::endl;
         break;
       }
     }
     Image output(basePosPlus.first - basePos.first, basePosPlus.second - basePos.second);
-    //std::cout << "Output dimensions: " << output.width() << "x" << output.height() << std::endl;
-    //std::cout << "Base dimensions: " << base.width() << "x" << base.height() << std::endl;
-
     //deal with base picture
     for(unsigned int x = 0; x < base.width(); ++ x){
       for(unsigned int y = 0; y < base.height(); ++y){
@@ -238,7 +212,6 @@ using namespace cs225;
       unsigned int height_ = sticker->height();
       int x_pos = positions_[index].first;
       int y_pos = positions_[index].second;
-      //std::cout << "line 180" << std::endl;
       for(unsigned int x = 0; x < width_; ++ x){
             for(unsigned int y = 0; y < height_; ++y){
               if(sticker->getPixel(x, y).a != 0) {
