@@ -78,12 +78,10 @@ template <typename T>
 List<T> List<T>::split(int splitPoint) {
     if (splitPoint > length_)
         return List<T>();
-
     if (splitPoint < 0)
         splitPoint = 0;
-
     ListNode * secondHead = split(head_, splitPoint);
-
+    std::cout << __LINE__ << secondHead->data << std::endl;
     int oldLength = length_;
     if (secondHead == head_) {
         // current list is going to be empty
@@ -97,7 +95,6 @@ List<T> List<T>::split(int splitPoint) {
             tail_ = tail_->next;
         length_ = splitPoint;
     }
-
     // set up the returned list
     List<T> ret;
     ret.head_ = secondHead;
@@ -107,6 +104,12 @@ List<T> List<T>::split(int splitPoint) {
             ret.tail_ = ret.tail_->next;
     }
     ret.length_ = oldLength - splitPoint;
+
+    
+    stringstream s3;//analyze
+    ret.print(s3);
+    std::cout << s3.str() << std::endl;
+    
     return ret;
 }
 

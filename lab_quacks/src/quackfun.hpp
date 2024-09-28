@@ -29,9 +29,15 @@ namespace QuackFun {
 template <typename T>
 T sum(stack<T>& s)
 {
-
     // Your code here
-    return T(); // stub return value (0 for primitive types). Change this!
+    if(s.empty()) return T();
+    T topEle = s.top();
+    T sum_;
+    s.pop();//no return velue!!!
+    //sum_ = sum_ + sum(s);
+    T prev_sum = sum(s);
+    s.push(topEle);
+    return topEle + prev_sum; // stub return value (0 for primitive types). Change this!
                 // Note: T() is the default value for objects, and 0 for
                 // primitive types
 }
@@ -53,11 +59,35 @@ T sum(stack<T>& s)
  * @param input The queue representation of a string to check for balanced brackets in
  * @return      Whether the input string had balanced brackets
  */
-bool isBalanced(queue<char> input)
+bool isBalanced(queue<char> input)//need rewrite
 {
 
     // @TODO: Make less optimistic
-    return true;
+
+    if(input.empty()) return true;
+    bool jude = true;
+    stack<char> sta;
+    while(!input.empty()){
+        char q = input.front();
+        if(q == '[' || q == '(' || q == '{' ){
+            sta.push(input.front());
+        }else if(q == ']' || q == ')' || q == '}' ){
+            if(sta.empty()){
+                return false;
+            }else{
+                char s = sta.top();
+                if(!((s == '[' && q == ']') || (s == '(' && q == ')') || (s == '{' && q == '}'))){
+                    return false;
+                }
+                sta.pop();
+            }
+        }
+        input.pop();
+
+    }
+    return sta.empty();
+    
+
 }
 
 /**
@@ -79,8 +109,35 @@ template <typename T>
 void scramble(queue<T>& q)
 {
     stack<T> s;
-    // optional: queue<T> q2;
+    queue<T> q2;
+    int levelCount = 1;  // Tracks how many elements should be in the current level
 
-    // Your code here
+    while (!q.empty()) {
+        // Collect the current level's elements
+        int elementsInLevel = std::min(levelCount, static_cast<int>(q.size()));
+        if (levelCount % 2 == 0) {
+            // For even levels, push into the stack to reverse the order
+            for (int i = 0; i < elementsInLevel; ++i) {
+                s.push(q.front());
+                q.pop();
+            }
+            // Pop from the stack and put them into the new queue in reversed order
+            while (!s.empty()) {
+                q2.push(s.top());
+                s.pop();
+            }
+        } else {
+            // For odd levels, directly push into the new queue in normal order
+            for (int i = 0; i < elementsInLevel; ++i) {
+                q2.push(q.front());
+                q.pop();
+            }
+        }
+        // Move to the next level
+        levelCount++;
+    }
+
+    // Reassign the scrambled queue back to the original
+    q = q2;
 }
 }

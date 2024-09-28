@@ -28,6 +28,44 @@ TEST_CASE("List::reverse", "[weight=5][part=2]") {
   REQUIRE( out == expected );
 }
 
+TEST_CASE("List::reverseNth #3", "[weight=5][part=2]") {
+  List<int> list;
+  list.insertBack(1);
+  list.insertBack(2);
+  list.insertBack(3);
+  list.insertBack(4);
+  list.insertBack(5);
+  list.insertBack(6);
+  list.insertBack(7);
+
+  list.reverseNth(3);
+
+   stringstream s1;
+  list.print(s1);
+  std::cout << s1.str() << std::endl;
+  
+  REQUIRE( "< 3 2 1 6 5 4 7 >" == s1.str() );
+}
+
+TEST_CASE("List::reverseNth #4", "[weight=5][part=2]") {
+  List<int> list;
+  list.insertBack(1);
+  list.insertBack(2);
+  list.insertBack(3);
+  list.insertBack(4);
+  list.insertBack(5);
+  list.insertBack(6);
+  list.insertBack(7);
+
+  list.reverseNth(4);
+
+   stringstream s1;
+  list.print(s1);
+  std::cout << s1.str() << std::endl;
+  
+  REQUIRE( "< 4 3 2 1 7 6 5 >" == s1.str() );
+}
+
 TEST_CASE("List::reverseNth #1", "[weight=5][part=2]") {
   PNG in;        in.readFromFile("../data/alma.png");
   PNG expected;  expected.readFromFile("../data/expected-reverseN_1.png");
@@ -55,6 +93,29 @@ TEST_CASE("List::reverseNth #2", "[weight=5][part=2]") {
 
   REQUIRE( out == expected );
 }
+/*
+TEST_CASE("List::merge 1", "[weight=5][part=2]") {
+  List<int> list;
+  list.insertBack(1);
+  list.insertBack(3);
+  list.insertBack(4);
+  list.insertBack(6);
+
+  List<int> list1;
+  list1.insertBack(2);
+  list1.insertBack(5);
+  list1.insertBack(7);
+  
+  List<int>::ListNode* merged_head = list.merge(list.head(), list1.head());
+
+  stringstream s1;
+  list.print(s1);
+  std::cout << s1.str() << std::endl;
+  
+  REQUIRE( "< 1 2 3 4 5 6 7 >" == s1.str() );
+}
+
+*/
 
 
 TEST_CASE("List::merge", "[timeout=25000][weight=10][part=2][valgrind]") {

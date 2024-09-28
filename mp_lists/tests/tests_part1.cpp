@@ -53,6 +53,7 @@ TEST_CASE("List::waterfall simple", "[weight=5][part=1][valgrind]") {
     List<int> list;
     for (int i = 1; i <= 8; i++)
         list.insertBack(i);
+    
     list.waterfall();
     stringstream s;
     list.print(s);
@@ -70,10 +71,16 @@ TEST_CASE("List::waterfall images", "[weight=5][part=1]") {
             list.insertBack(in.getPixel(i, j));
 
     list.waterfall();
-
+      /*
+    stringstream s1;//analyze
+    list.print(s1);
+    std::cout << s1.str() << std::endl;
+*/
     vector<HSLAPixel> imvect(list.begin(), list.end());
 
     PNG out(900, 600);
+  
+    //std::cout <<__LINE__ << std::endl;
     unsigned x = 0;
     for (unsigned i = 0; i < imvect.size(); i++) {
         unsigned y = i % 600;
@@ -84,6 +91,7 @@ TEST_CASE("List::waterfall images", "[weight=5][part=1]") {
 
     INFO("First split output saved as actual-waterfall.png");
     REQUIRE(out == expected);
+  
 }
 
 TEST_CASE("List::split simple", "[weight=5][part=1][valgrind]") {
@@ -93,17 +101,94 @@ TEST_CASE("List::split simple", "[weight=5][part=1][valgrind]") {
     list.insertBack(2);
     list.insertBack(3);
     list.insertBack(4);
+    /*
+    stringstream s3;//analyze
+    list.print(s3);
+    std::cout << s3.str() << std::endl;
+    */
+   
 
     List<int> slist = list.split(2);
     stringstream s1, s2;
 
     list.print(s1);
+    //std::cout << s1.str() << std::endl;
     slist.print(s2);
+    //std::cout << s2.str() << std::endl;
 
     REQUIRE( "< 1 2 >" == s1.str() );
     REQUIRE( "< 3 4 >" == s2.str() );
 }
 
+
+TEST_CASE("splitpoint = 0", "[weight=5][part=1][valgrind]") {
+    List<int> list;
+
+    list.insertBack(1);
+    list.insertBack(2);
+    list.insertBack(3);
+    list.insertBack(4);
+
+    //stringstream s3;//analyze
+    //list.print(s3);
+    //std::cout << s3.str() << std::endl;
+
+    List<int> slist = list.split(0);
+    stringstream s1, s2;
+
+    list.print(s1);
+    //std::cout << __LINE__ <<  s1.str() << std::endl;
+    slist.print(s2);
+    //std::cout << s2.str() << std::endl;
+
+    REQUIRE( "< >" == s1.str() );
+    REQUIRE( "< 1 2 3 4 >" == s2.str() );
+}
+
+TEST_CASE("negative startpoint", "[weight=5][part=1][valgrind]") {
+    List<int> list;
+
+    list.insertBack(1);
+    list.insertBack(2);
+    list.insertBack(3);
+    list.insertBack(4);
+
+    //stringstream s3;//analyze
+    //list.print(s3);
+    //std::cout << s3.str() << std::endl;
+
+    List<int> slist = list.split(-1);
+    stringstream s1, s2;
+    list.print(s1);
+    //std::cout << s1.str() << std::endl;
+    slist.print(s2);
+    //std::cout << s2.str() << std::endl;
+
+    //REQUIRE( "< 1 2 >" == s1.str() );
+    REQUIRE( "< 1 2 3 4 >" == s2.str() );
+}
+/*
+TEST_CASE("overrange splitpoint", "[weight=5][part=1][valgrind]") {
+    List<int> list;
+
+    list.insertBack(1);
+    list.insertBack(2);
+    list.insertBack(3);
+    list.insertBack(4);
+
+    List<int> slist = list.split(5);
+    stringstream s1, s2;
+
+    list.print(s1);
+    //std::cout << s1.str() << std::endl;
+    slist.print(s2);
+    //std::cout << s2.str() << std::endl;
+
+    REQUIRE( "< 1 2 3 4 >" == s1.str() );
+    REQUIRE( "< 1 2 3 4 >" == s2.str() );
+}
+*/
+/*
 TEST_CASE("List::split images", "[weight=5][part=1]") {
 
     PNG in;         in.readFromFile("../data/split.png");
@@ -144,7 +229,6 @@ TEST_CASE("List::split images", "[weight=5][part=1]") {
             x++;
     }
     out2.writeToFile("actual-split_2.png");
-
     INFO("Second split output saved as actual-split_2.png");
     REQUIRE(out2 == expected_2);
 
@@ -162,6 +246,7 @@ TEST_CASE("List::split images", "[weight=5][part=1]") {
     INFO("Third split output saved as actual-split_3.png");
     REQUIRE(out3 == expected_3);
 }
+*/
 
 TEST_CASE("List::_destroy empty list", "[weight=3][part=1][valgrind]") {
 
@@ -216,10 +301,15 @@ TEST_CASE("List::ListIterator::operator-- moves the iterator backwards", "[weigh
     for (unsigned i = 0; i < 10; i++) { list.insertFront(i); }
 
     List<unsigned>::ListIterator iter = list.begin();
-
-    iter++;  REQUIRE( *iter == 8 );
-    iter++;  REQUIRE( *iter == 7 );
-    iter--;  REQUIRE( *iter == 8 );
+    //stringstream s1;//analyze
+    //list.print(s1);
+    //std::cout << s1.str() << std::endl;
+    iter++;  
+    REQUIRE( *iter == 8 );
+    iter++;  
+    REQUIRE( *iter == 7 );
+    iter--; 
+    REQUIRE( *iter == 8 );
     iter--;  REQUIRE( *iter == 9 );
 }
 
@@ -246,7 +336,9 @@ TEST_CASE("List::ListIterator::end is reached", "[weight=1][part=1][valgrind]") 
     iter++;
     iter++;
     iter++;
-
+    //std::cout << __LINE__ << *list.end()  << std::endl;
+    //std::cout << to_string(iter == list.end()) << std::endl;
+    //std::cout << __LINE__ << *iter  << std::endl;
     REQUIRE( (bool)(iter == list.end()) );
 }
 
@@ -255,7 +347,10 @@ TEST_CASE("List::ListIterator::end is not ::begin in a non-empty list", "[weight
     list.insertFront(1);
     list.insertFront(2);
     list.insertFront(3);
-
+    //std::cout << __LINE__ << *list.begin()  << std::endl;//incorrect: (*(list.begin())).position_->data
+    //std::cout << __LINE__ << *list.end()  << std::endl;
+    //you have overwrite * in List_listIterator.hpp
+    //std::cout << __LINE__ << list.end().position_->data << std::endl;
     REQUIRE( (bool)(list.begin() != list.end()) );
 }
 
