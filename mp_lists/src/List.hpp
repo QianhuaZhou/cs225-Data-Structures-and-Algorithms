@@ -18,7 +18,7 @@ List<T>::List() {
 template <typename T>
 typename List<T>::ListIterator List<T>::begin() const {//the keyword class and typename can be interchanged
   // @TODO: graded in mp_lists part 1
-  return List<T>::ListIterator(head_);
+  return List<T>::ListIterator(head_, tail_);
 }
 
 /**
@@ -27,7 +27,7 @@ typename List<T>::ListIterator List<T>::begin() const {//the keyword class and t
 template <typename T>
 typename List<T>::ListIterator List<T>::end() const {
   // @TODO: graded in mp_lists part 1
-  return List<T>::ListIterator(tail_->next);
+  return List<T>::ListIterator(tail_->next, tail_);
 }
 
 

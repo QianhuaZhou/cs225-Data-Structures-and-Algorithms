@@ -61,31 +61,29 @@ T sum(stack<T>& s)
  */
 bool isBalanced(queue<char> input)//need rewrite
 {
-
     // @TODO: Make less optimistic
-
-    if(input.empty()) return true;
-    bool jude = true;
-    stack<char> sta;
+    stack<char> s;
+    //char first = input.back();
+    //while(input.back() != ' '){//gain the most right element without removing it
     while(!input.empty()){
-        char q = input.front();
-        if(q == '[' || q == '(' || q == '{' ){
-            sta.push(input.front());
-        }else if(q == ']' || q == ')' || q == '}' ){
-            if(sta.empty()){
+        char q_front = input.front();
+        if(q_front == '[' || q_front == '(' ||q_front == '{'){
+            s.push(q_front);
+        }else if(q_front == ']' || q_front == ')' ||q_front == '}'){
+            if(s.empty()) return false;
+            char s_top = s.top();
+            s.pop();
+           if ((q_front == ']' && s_top != '[') ||
+                (q_front == ')' && s_top != '(') ||
+                (q_front == '}' && s_top != '{')) {
                 return false;
-            }else{
-                char s = sta.top();
-                if(!((s == '[' && q == ']') || (s == '(' && q == ')') || (s == '{' && q == '}'))){
-                    return false;
-                }
-                sta.pop();
             }
         }
+        //input.dequeue(); ????
         input.pop();
-
     }
-    return sta.empty();
+    if(!s.empty()) return false;
+    return true;
     
 
 }
@@ -110,34 +108,26 @@ void scramble(queue<T>& q)
 {
     stack<T> s;
     queue<T> q2;
-    int levelCount = 1;  // Tracks how many elements should be in the current level
-
+    int levelCount = 1; 
     while (!q.empty()) {
-        // Collect the current level's elements
         int elementsInLevel = std::min(levelCount, static_cast<int>(q.size()));
-        if (levelCount % 2 == 0) {
-            // For even levels, push into the stack to reverse the order
+        if (levelCount % 2 == 0) {//even
             for (int i = 0; i < elementsInLevel; ++i) {
                 s.push(q.front());
                 q.pop();
             }
-            // Pop from the stack and put them into the new queue in reversed order
             while (!s.empty()) {
                 q2.push(s.top());
                 s.pop();
             }
-        } else {
-            // For odd levels, directly push into the new queue in normal order
+        } else {//odd
             for (int i = 0; i < elementsInLevel; ++i) {
                 q2.push(q.front());
                 q.pop();
             }
         }
-        // Move to the next level
         levelCount++;
     }
-
-    // Reassign the scrambled queue back to the original
     q = q2;
 }
 }

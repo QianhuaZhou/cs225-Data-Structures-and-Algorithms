@@ -152,10 +152,16 @@ class BSTNodeDescriptor
 
 template <class K, class V>
 void BST<K, V>::printFunctionOrder(std::ostream& out) const
-{
-    for (int i = 0; i < (int)functionCalls.size(); i++) {
-        out << functionCalls[i] << std::endl;
+{   
+    std::cout << "printed function is called" << std::endl;
+    if (functionCalls.empty()) {
+            out << "No function calls recorded." << std::endl;
+    }else{
+        for (int i = 0; i < (int)functionCalls.size(); i++) {
+            out << functionCalls[i] << std::endl;
+        }
     }
+    
 }
 
 template <class K, class V>

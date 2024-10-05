@@ -56,7 +56,11 @@ TEST_CASE("test_insert 1", "[weight=5]"){
     BST<int, int> tree;
     for(size_t i = 0; i < nodes.size(); i++){
         tree.insert(nodes[i],i);
+        //tree.printFunctionOrder(std::cout);
+        //tree.print();
     }
+    //tree.printFunctionOrder(std::cout);
+    //tree.print();
 
     std::sort(nodes.begin(), nodes.end());
 
@@ -79,9 +83,10 @@ TEST_CASE("test_insert 2", "[weight=5]"){
     std::set<std::string> temp;
     for(size_t i = 0; i < nodes.size(); i++){
         tree.insert(nodes[i],i);
+        //tree.print();
         temp.insert(nodes[i]);
     }
-
+    //tree.print();
     nodes.assign(temp.begin(), temp.end());
     std::sort(nodes.begin(), nodes.end());
 
@@ -311,7 +316,7 @@ TEST_CASE("test_allBuild 1", "[weight=5]"){
 
     std::vector<int> ans = {0, 2, 4};
     std::vector<int> out = allBuild(nodes);
-
+    for(auto i : out) std::cout << i << std::endl;
     match_vector(out, ans);
 }
 

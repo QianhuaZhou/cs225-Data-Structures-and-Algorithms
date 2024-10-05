@@ -3,10 +3,11 @@ class ListIterator : public std::iterator<std::bidirectional_iterator_tag, T> {
   private:
     // @TODO: graded in mp_lists part 1
     ListNode* position_;
+    ListNode* tail_;
 
   public:
-    ListIterator() : position_(NULL) { }
-    ListIterator(ListNode* x) : position_(x) { }
+    ListIterator() : position_(nullptr), tail_(nullptr){ }
+    ListIterator(ListNode* x, ListNode* tail) : position_(x), tail_(tail){ }
 
 
     // Pre-Increment, ++iter
@@ -28,13 +29,15 @@ class ListIterator : public std::iterator<std::bidirectional_iterator_tag, T> {
         if (position_ != nullptr) {
             position_ = position_->next;
         }
-        return ListIterator(temp);
+        return ListIterator(temp, tail_);
     }
 
     // Pre-Decrement, --iter
     ListIterator& operator--() {
         // @TODO: graded in mp_lists part 1
-        if (position_ != nullptr && position_->prev != nullptr) {
+        if(position_ == nullptr){//end
+            position_ = tail_;
+        }else if (position_->prev != nullptr) {
             position_ = position_->prev;
         }
         return *this;
@@ -44,10 +47,12 @@ class ListIterator : public std::iterator<std::bidirectional_iterator_tag, T> {
     ListIterator operator--(int) {//difference with post-dec?
         // @TODO: graded in mp_lists part 1
         ListNode* temp = position_;
-        if (position_ != nullptr && position_->prev != nullptr) {
+        if (position_ == nullptr){//end
+            position_ = tail_;
+        }else if(position_->prev != nullptr) {
             position_ = position_->prev;
         }
-        return ListIterator(temp);
+        return ListIterator(temp, tail_);
         
     }
 
@@ -61,8 +66,6 @@ class ListIterator : public std::iterator<std::bidirectional_iterator_tag, T> {
     }
 
     bool operator==(const ListIterator& rhs) {
-        //std::cout << __LINE__ <<  "  " << rhs.position_ << std::endl;
-        //std::cout << __LINE__ <<  "  " << position_ << std::endl;
         return (rhs.position_) == position_;//call bool operator!=(const ListIterator& rhs)
     }
 

@@ -354,4 +354,19 @@ TEST_CASE("List::ListIterator::end is not ::begin in a non-empty list", "[weight
     REQUIRE( (bool)(list.begin() != list.end()) );
 }
 
+TEST_CASE("List::ListIterator::operator-- from end", "[weight=1][part=1][valgrind]") {
+    List<unsigned> list;
+    for (unsigned i = 0; i < 10; i++) { list.insertFront(i); }
 
+    List<unsigned>::ListIterator iter = list.end();
+    //stringstream s1;//analyze
+    //list.print(s1);
+    //std::cout << s1.str() << std::endl;
+    iter--;  
+    REQUIRE( *iter == 0 );
+    iter--;  
+    REQUIRE( *iter == 1 );
+    iter++; 
+    REQUIRE( *iter == 0 );
+    iter--;  REQUIRE( *iter == 1 );
+}
