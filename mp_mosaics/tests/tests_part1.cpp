@@ -73,12 +73,13 @@ TEST_CASE("KDTree::shouldReplace Tests", "[weight=1][part=1]") {
   Point<3> possibleBest1(2, 4, 4);
   Point<3> currentBest2(1, 3, 6);
   Point<3> possibleBest2(2, 4, 4);
-  Point<3> currentBest3(0, 2, 4);
-  Point<3> possibleBest3(2, 4, 6);
+  Point<3> currentBest3(50, 50, 0);
+  Point<3> possibleBest3(0, 100, 0);
 
   REQUIRE( shouldReplace(target, currentBest1, possibleBest1) == true );
   REQUIRE( shouldReplace(target, currentBest2, possibleBest2) == false );
-  REQUIRE( shouldReplace(target, currentBest3, possibleBest3) == false );  // operator<
+  Point<3> target1(50, 100, 0);
+  REQUIRE( shouldReplace(target1, currentBest3, possibleBest3) == true );  // operator<
 }
 
 TEST_CASE("select simple","[weight=1][part=1]") {
@@ -334,7 +335,7 @@ TEST_CASE("KDTree::findNearestNeighbor (2D), testing correct path with fence jum
 }
 
 
-TEST_CASE("KDTree::findNearestNeighbor (3D), testing tie-breaking", "[weight=1][part=1]") {
+TEST_CASE("testing tie-breaking", "[weight=1][part=1]") {
   double coords[14][3] = {{0, 0, 100},   // mine
                           {0, 100, 100}, // mine
                           {0, 50, 50},   // mine
@@ -365,6 +366,7 @@ TEST_CASE("KDTree::findNearestNeighbor (3D), testing tie-breaking", "[weight=1][
   Point<3> expected2(expectedCoords2);
 
   KDTree<3> tree(points);
+  tree.printTree();
   int size = 14;
   int K = 3;
   std::string fname = "kdtree_"+to_string(K)+"_"+to_string(size)+"-actual.kd";
@@ -376,8 +378,9 @@ TEST_CASE("KDTree::findNearestNeighbor (3D), testing tie-breaking", "[weight=1][
   INFO(s.str());
 
   action.trigger = true;
-
+  //std::cout << __LINE__ << " " << tree.findNearestNeighbor(target) << std::endl;
   REQUIRE( tree.findNearestNeighbor(target) == expected );
+  //std::cout << __LINE__ << " " << tree.findNearestNeighbor(target2) << std::endl;
   REQUIRE( tree.findNearestNeighbor(target2) == expected2 );
 }
 

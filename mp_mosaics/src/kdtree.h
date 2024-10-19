@@ -199,6 +199,21 @@ class KDTree
     /**
      * @todo Add your helper functions here.
      */
+    // Recursive helper function to build the KDTree
+    KDTreeNode* buildTree(std::vector<Point<Dim>>& points, int left, int right, int dimension);
+
+    // Helper function to find the median using your `select` implementation
+    int findMedian(std::vector<Point<Dim>>& points, int left, int right, int dimension);
+
+    //helper function for destructor
+    void remove(KDTreeNode* root);
+
+    //helper function for find nearest neighbor
+    double distanceSquared(const Point<Dim>& point1, const Point<Dim>& point2) const;
+    Point<Dim> findNearest(KDTreeNode* node, const Point<Dim>& query, int depth, Point<Dim>& best) const;
+    //Point<Dim> findNearest(KDTreeNode* node, const Point<Dim>& query, int depth, Point<Dim>& best, double& bestDist) const;
+
+    //double distanceSquared(const Point<Dim>& a, const Point<Dim>& b) const;
 };
 
 /**
@@ -286,6 +301,14 @@ bool smallerDimVal(const Point<Dim>& first, const Point<Dim>& second,
   */
 template <typename RandIter, typename Comparator>
 void select(RandIter begin, RandIter end, RandIter k, Comparator cmp);
+
+// Helper function to partition the range using iterators
+template <typename RandIter, typename Comparator>
+RandIter partition(RandIter start, RandIter end, RandIter pivot, Comparator cmp);
+
+// Quickselect function using iterators and comparator
+template <typename RandIter, typename Comparator>
+void quickselect(RandIter start, RandIter end, RandIter k, Comparator cmp);
 
 
 #include "kdtree.hpp"

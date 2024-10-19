@@ -11,7 +11,8 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-
+using std::cout;
+using std::endl;
 /**
  * BTree class. Provides interfaces for inserting and finding elements in
  * B-tree.
@@ -338,12 +339,16 @@ class BTree
  * the sorted order of elements. If val occurs in elements, then this returns
  * the index of val in elements.
  */
+
 template <class T, class C>
 size_t insertion_idx(const std::vector<T>& elements, const C& val)
 {
     /* TODO Your code goes here! */
-
-    return 5;
+	unsigned i = 0;
+	while(i < elements.size() && elements[i] < val){
+		++i;
+	}
+    return i; 
 }
 
 #include "btree_given.hpp"
