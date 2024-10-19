@@ -11,8 +11,7 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-using std::cout;
-using std::endl;
+
 /**
  * BTree class. Provides interfaces for inserting and finding elements in
  * B-tree.
@@ -277,6 +276,11 @@ class BTree
      * @return The value (if found), the default V if not.
      */
     V find(const K& key) const;
+    
+     //self-defined
+     const BTreeNode* getRoot() const {
+        return root;
+    }
 
   private:
     /**
@@ -325,6 +329,8 @@ class BTree
      */
     bool is_valid(const BTreeNode* subroot, std::vector<DataPair>& data,
                   unsigned int order) const;
+
+   
 };
 
 /**
@@ -339,16 +345,20 @@ class BTree
  * the sorted order of elements. If val occurs in elements, then this returns
  * the index of val in elements.
  */
-
 template <class T, class C>
 size_t insertion_idx(const std::vector<T>& elements, const C& val)
 {
     /* TODO Your code goes here! */
-	unsigned i = 0;
-	while(i < elements.size() && elements[i] < val){
-		++i;
-	}
-    return i; 
+    size_t size = elements.size();
+    if(size == 0) return 0;
+    //std::cout << __LINE__ << " size = " << size << std::endl;
+    size_t mid = size/2;
+    std::vector<T> firstHalf(elements.begin(), elements.begin() + mid);
+    if(elements[mid] > val) return insertion_idx(firstHalf, val);
+    std::vector<T> secondHalf(elements.begin() + mid + 1, elements.end());
+    if(elements[mid] < val) return mid + 1 + insertion_idx(secondHalf, val);
+    return mid;
+    
 }
 
 #include "btree_given.hpp"

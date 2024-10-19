@@ -57,7 +57,9 @@ TEST_CASE("test_insertion_idx_small", "[weight=5][timeout=8000]") {
     std::vector<int> data = { 1, 3, 5, 7 };
     REQUIRE(0 == insertion_idx(data, -1));
     REQUIRE(0 == insertion_idx(data, 1));
-    REQUIRE(4 == insertion_idx(data, 99));
+    size_t ret = insertion_idx(data, 99);
+    //std::cout << __LINE__ << ret << std::endl;
+    REQUIRE(4 == ret);
 }
 
 size_t insertion_idx_time(std::vector< int >* vec) {
@@ -103,6 +105,7 @@ TEST_CASE("test_btree3_small", "[weight=5][valgrind][timeout=8000]") {
     };
     BTree< int, int > b(3);
     do_inserts(data, b);
+    //std::cout << *(b.getRoot()) << std::endl;
     verify_finds(data, b);
     REQUIRE(0 == b.find(-999));
     REQUIRE(b.is_valid(3));
