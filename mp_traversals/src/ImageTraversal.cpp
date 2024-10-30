@@ -9,6 +9,7 @@
 #include "ImageTraversal.h"
 
 namespace Traversals {
+
   /**
   * Calculates a metric for the difference between two pixels, used to
   * calculate if a pixel is within a tolerance.
@@ -34,8 +35,11 @@ namespace Traversals {
   * @param work_list the deque storing a list of points to be processed
   * @param point the point to be added
   */
-  void bfs_add(std::deque<Point> & work_list, const Point & point) {
+  void bfs_add(std::deque<Point> & work_list, const Point & point) {//queue, FIFO
     /** @todo [Part 1] */
+    auto it = std::find(work_list.begin(), work_list.end(), point);
+    if(it != work_list.end()) return;
+    work_list.push_back(point);
   }
 
   /**
@@ -43,8 +47,12 @@ namespace Traversals {
   * @param work_list the deque storing a list of points to be processed
   * @param point the point to be added
   */
-  void dfs_add(std::deque<Point> & work_list, const Point & point) {
+  void dfs_add(std::deque<Point> & work_list, const Point & point) {//stack, LIFO
     /** @todo [Part 1] */
+    auto it = std::find(work_list.begin(), work_list.end(), point);
+    if(it != work_list.end()) work_list.erase(it);
+    work_list.push_front(point); // LIFO: Add to the front for DFS behavior
+    
   }
 
   /**
@@ -53,6 +61,7 @@ namespace Traversals {
   */
   void bfs_pop(std::deque<Point> & work_list) {
     /** @todo [Part 1] */
+    work_list.pop_front();
   }
 
   /**
@@ -61,6 +70,7 @@ namespace Traversals {
   */
   void dfs_pop(std::deque<Point> & work_list) {
     /** @todo [Part 1] */
+    work_list.pop_front();
   }
 
   /**
@@ -70,7 +80,7 @@ namespace Traversals {
    */
   Point bfs_peek(std::deque<Point> & work_list) {
     /** @todo [Part 1] */
-    return Point(0, 0);
+    return work_list.front();
   }
 
   /**
@@ -80,7 +90,7 @@ namespace Traversals {
    */
   Point dfs_peek(std::deque<Point> & work_list) {
     /** @todo [Part 1] */
-    return Point(0, 0);
+    return work_list.front();
   }
 
   /**
@@ -92,8 +102,9 @@ namespace Traversals {
   * it will not be included in this traversal
   * @param fns the set of functions describing a traversal's operation
   */
-  ImageTraversal::ImageTraversal(const PNG & png, const Point & start, double tolerance, TraversalFunctions fns) {  
+  ImageTraversal::ImageTraversal(const PNG & png, const Point & start, double tolerance, TraversalFunctions fns): start_(start), png_(png), fns_(fns), tolerance_(tolerance){  
     /** @todo [Part 1] */
+   
   }
 
   /**
@@ -101,7 +112,7 @@ namespace Traversals {
   */
   ImageTraversal::Iterator ImageTraversal::begin() {
     /** @todo [Part 1] */
-    return ImageTraversal::Iterator();
+    return ImageTraversal::Iterator(this);
   }
 
   /**
@@ -112,11 +123,25 @@ namespace Traversals {
     return ImageTraversal::Iterator();
   }
 
-  /**
-  * Default iterator constructor.
-  */
-  ImageTraversal::Iterator::Iterator() {
-    /** @todo [Part 1] */
+
+
+  ImageTraversal::Iterator::Iterator(): work_list_(), traversal_(nullptr), current_(Point(0, 0)), visited(){
+     
+  }
+
+
+  //self-defined
+  ImageTraversal::Iterator::Iterator(ImageTraversal* traversal):
+  traversal_(traversal), current_(traversal->start_){
+    work_list_.push_back(current_);
+
+    visited.resize(traversal->png_.width());
+    for (unsigned i = 0; i < traversal->png_.width(); ++i) {
+       visited[i].resize(traversal->png_.height());
+      for (unsigned j = 0; j < traversal->png_.height(); ++j) {
+         visited[i][j] = false;
+      }
+    }
   }
 
 
@@ -127,6 +152,43 @@ namespace Traversals {
   */
   ImageTraversal::Iterator & ImageTraversal::Iterator::operator++() {
     /** @todo [Part 1] */
+    if (work_list_.empty()) {
+        *this = Iterator();  
+        return *this;
+    }
+    current_ = traversal_->fns_.peek(work_list_);
+    traversal_->fns_.pop(work_list_);
+    
+    //std::cout << "Marking visited: (" << current_.x << ", " << current_.y << ")\n";
+    //visited.insert({current_, true});
+    visited[current_.x][current_.y] = true;
+    /*
+     std::cout << "*******traversal throught visited *******" << std::endl;
+    for(auto pair : visited){
+      std::cout << "Point: (" << pair.x << ", " << pair.y << ") " << std::endl;
+    }
+    std::cout << "*******traversal end *******" << std::endl;
+   
+    */
+   
+    Point right(current_.x + 1, current_.y);
+    Point down(current_.x, current_.y + 1);
+  
+    Point left(current_.x - 1, current_.y);;
+    Point up(current_.x, current_.y - 1);
+ 
+    if (ValidToVisit(right)) traversal_->fns_.add(work_list_, right);
+    if (ValidToVisit(down)) traversal_->fns_.add(work_list_, down);
+    if (ValidToVisit(left)) traversal_->fns_.add(work_list_, left);
+    if (ValidToVisit(up)) traversal_->fns_.add(work_list_, up);
+
+    if(!work_list_.empty()){
+      current_ = traversal_->fns_.peek(work_list_);
+    }else{
+       *this = Iterator();  
+      return *this;
+    }
+ 
     return *this;
   }
 
@@ -137,7 +199,7 @@ namespace Traversals {
   */
   Point ImageTraversal::Iterator::operator*() {
     /** @todo [Part 1] */
-    return Point(0, 0);
+    return current_;
   }
 
   /**
@@ -147,7 +209,8 @@ namespace Traversals {
   */
   bool ImageTraversal::Iterator::operator!=(const ImageTraversal::Iterator &other) {
     /** @todo [Part 1] */
-    return false;
+    return (traversal_ != other.traversal_) || (current_.x != other.current_.x || current_.y != other.current_.y);
+
   }
 
   /**
@@ -166,6 +229,17 @@ namespace Traversals {
    */
   bool ImageTraversal::Iterator::empty() const {
     return work_list_.empty();
+  }
+
+
+bool Traversals::ImageTraversal::Iterator::ValidToVisit(const Point& p){
+  if(p.x >= traversal_->png_.width() || p.y >= traversal_->png_.height()) return false;
+    if(visited[p.x][p.y]) return false;
+
+    const HSLAPixel& pix_curr = traversal_->png_.getPixel(p.x, p.y);
+    const HSLAPixel& pix_start = traversal_->png_.getPixel(traversal_->start_.x, traversal_->start_.y);
+    if(calculateDelta(pix_curr, pix_start) >= traversal_->tolerance_) return false;
+    return true;
   }
 
 }

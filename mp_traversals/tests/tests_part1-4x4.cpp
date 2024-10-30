@@ -43,9 +43,11 @@ TEST_CASE("DFS visits the correct pixel first", "[weight=2][part=1]") {
   Traversals::ImageTraversal dfs(png, startPoint, 0.2, {
     Traversals::dfs_add, Traversals::dfs_pop, Traversals::dfs_peek
   });
-
+  //std::cout << "===========" << __LINE__ << " call dfs.begin() ===========" << std::endl;
   Traversals::ImageTraversal::Iterator it = dfs.begin();
+  //std::cout << "===========" << __LINE__ << " call ++it ===========" << std::endl;
   ++it;
+  //std::cout << __LINE__ << std::endl;
   REQUIRE( *it == Point(1, 2) );
 }
 
@@ -85,6 +87,7 @@ TEST_CASE("DFS visits all points within a tolerance", "[weight=1][part=1][valgri
 
   unsigned count = 0;
   for (auto it = t.begin(); it != t.end(); ++it) {
+    //std::cout << "===========" << __LINE__ << " count = " << count << " ===========" << std::endl;
     Point p = *it;
     count++;
   }
@@ -101,6 +104,7 @@ TEST_CASE("BFS visits all points within a tolerance", "[weight=1][part=1][valgri
 
   unsigned count = 0;
   for (const Point & p : t) {
+    //std::cout << "===========" << __LINE__ << " count = " << count << " ===========" << std::endl;
     count++;
   }
 
@@ -131,7 +135,9 @@ TEST_CASE("BFS visits all points within a tolerance (includes pixels on image ed
   });
 
   unsigned count = 0;
-  for (const Point & p : t) { count++; }
+  for (const Point & p : t) { 
+    //std::cout << "===========" << __LINE__ << " count = " << count << " ===========" << std::endl;
+    count++; }
 
   REQUIRE( count == 12 );
 }

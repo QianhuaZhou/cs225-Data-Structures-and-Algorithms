@@ -21,10 +21,6 @@ int main() {
   //   submit Part 3 of this assignment -- uncomment it when you're ready.
   PNG myImage;
   bool real_success = myImage.readFromFile("../data/i-rainbow-bfs-2.png");
-  if (!real_success) {
-      std::cerr << "Error: Could not read the file ../data/i-rainbow-bfs-2.png" << std::endl;
-      return 1; // Exit early if the file was not read successfully
-  }
 
   FloodFilledImage myFlood(myImage);
 
@@ -32,8 +28,7 @@ int main() {
   Traversals::ImageTraversal dfs(myImage, startPoint, 0.2, {
     Traversals::dfs_add, Traversals::dfs_pop, Traversals::dfs_peek
   });
- // RainbowColorPicker picker(0.5);
-  MyColorPicker picker;
+  RainbowColorPicker picker(0.5);
   myFlood.addFloodFill(dfs, picker);
 
   Animation animation = myFlood.animate(50);
@@ -42,7 +37,7 @@ int main() {
 
   for(int i=0; i<50; ++i)
 	animation.addFrame( lastFrame );
-  //std::cout << "Frame count: " << animation.frameCount() << std::endl;
+  std::cout << "Frame count: " << animation.frameCount() << std::endl;
 
   lastFrame.writeToFile("../data/myFloodFill.png");
   animation.write("../data/myFloodFill.gif");

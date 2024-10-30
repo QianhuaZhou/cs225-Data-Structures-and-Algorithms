@@ -6,6 +6,9 @@
 #include <iterator>
 #include <deque>
 #include <vector>
+#include <map>
+#include <algorithm>
+
 #include "cs225/HSLAPixel.h"
 #include "cs225/PNG.h"
 #include "Point.h"
@@ -17,6 +20,8 @@ using namespace cs225;
  * 
  */
 namespace Traversals {
+  
+
   /**
   * The expected type for an add function for a traversal
   * The first parameter is the deque storing a list of points to be processed
@@ -64,12 +69,16 @@ namespace Traversals {
   */
   class ImageTraversal {
   public:
+    //bool operator<(const Point& lhs, const Point& rhs);
     /**
     * A forward iterator through an ImageTraversal.
     */
     class Iterator : std::iterator<std::forward_iterator_tag, Point> {
     public:
       Iterator();
+      Iterator(ImageTraversal* traversal);
+      //Iterator(Point* tail);
+
 
       Iterator & operator++();
       Point operator*();
@@ -80,11 +89,19 @@ namespace Traversals {
 
       /** @todo [Part 1] */
       /** add member functions if neccesary*/
-    private:
+      
+      //self-defined
+      bool ValidToVisit(const Point& p);
+
+      private:
       /** @todo [Part 1] */
       /** add private members here if neccesary*/
-      std::deque<Point> work_list_;
+      std::deque<Point> work_list_;//double-ended queue
 
+      ImageTraversal* traversal_;
+      Point current_;
+      std::vector<std::vector<bool>> visited;
+      
     };
 
     /**
@@ -102,8 +119,16 @@ namespace Traversals {
     */
     Iterator end();
 
+   
+
   private:
     /** @todo [Part 1] */
     /** add private members here if neccesary*/
+    Point start_;
+    PNG png_;
+    
+    TraversalFunctions fns_;
+    double tolerance_;
+    
   };
 }
