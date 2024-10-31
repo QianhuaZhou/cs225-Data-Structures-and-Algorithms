@@ -104,9 +104,15 @@ TEST_CASE("A NimLearner(1) random path contains one edge", "[weight=1][part=3]")
 
 TEST_CASE("NimLearner(1) updates the edge weight correctly", "[weight=1][part=3]") {
   NimLearner nim(1);
+  //std::cout << __LINE__ << nim.getGraph().getEdgeWeight("p1-1", "p2-0") << std::endl;
+  //std::cout << __LINE__ <<  " e.source = " << e.source << "; e.dest = " << e.dest << "; nim.g_.getEdgeWeight(path[i].source, path[i].dest) = " << nim.getGraph().getEdgeWeight(e.source, e.dest) << std::endl;
+
   std::vector<Edge> path = nim.playRandomGame();
-  REQUIRE(path.size() > 0);
   Edge e = path[0];
+  
+  //std::cout << __LINE__ <<  " e.source = " << e.source << "; e.dest = " << e.dest << "; nim.g_.getEdgeWeight(path[i].source, path[i].dest) = " << nim.getGraph().getEdgeWeight(e.source, e.dest) << std::endl;
+  REQUIRE(path.size() > 0);
+  
   nim.updateEdgeWeights(path);
 
   const Graph & g = nim.getGraph();
