@@ -116,7 +116,10 @@ TEST_CASE("test_decode", "[weight=1]") {
   buildText();
   HuffmanTree htree = constructTree("text.txt");
   BinaryFileReader bfile("../data/soln_test.bin");
+  //std::cout << __LINE__ << std::endl;
   string decoded = htree.decodeFile(bfile);
+
+  //std::cout << __LINE__ << std::endl;
   ifstream in("text.txt");
   stringstream expected;
   expected << in.rdbuf();

@@ -152,6 +152,12 @@ class HuffmanTree
         {
             // nothing
         }
+
+        //self-defined
+        TreeNode(int frequency, TreeNode* l, TreeNode* r) : freq(frequency), left(l), right(r)
+        {
+            // nothing
+        }
     };
 
     /**
