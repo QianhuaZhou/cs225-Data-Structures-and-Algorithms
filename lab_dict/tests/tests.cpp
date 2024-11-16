@@ -11,6 +11,7 @@
 #include <utility>
 #include <string>
 #include <set>
+#include <iostream>
 
 using namespace std;
 
@@ -39,9 +40,18 @@ static map< string, vector< string > > pronunciations =
 TEST_CASE("test_get_anagrams", "[weight=15]")
 {
     AnagramDict d(words);
+    //std::map<std::string, std::vector<std::string>> dict;
+    for(const auto& [key, value] : d.gainDict()){
+        std::cout << "key: " << key << " value: ";
+        for(auto& i : value){
+            std::cout << i << ", ";
+        }
+        std::cout << std::endl;
+    }
     const set< string > canon = { "dog", "god" };
     vector< string > result = d.get_anagrams("dog");
     set<string> resultSet(result.begin(), result.end());
+    for(const string& s : resultSet) std::cout << s << std::endl;
     REQUIRE(canon == resultSet);
     REQUIRE(d.get_anagrams("z").empty());
 }
@@ -92,6 +102,15 @@ TEST_CASE("test_homophones", "[weight=10]")
     REQUIRE(d.homophones("scent", "CeNt"));
     REQUIRE((! d.homophones("scent", "DOG")));
     REQUIRE((! d.homophones("garbage", "Tim")));
+    /*
+    
+static map< string, vector< string > > pronunciations = 
+                            { { "SCENT", { "DUMMY" } }, 
+                              { "CENT", { "DUMMY" } },
+                              { "SENT", { "DUMMY" } },
+                              { "DOG", { "DOGE" } }
+                            };
+                            */
 }
 
 

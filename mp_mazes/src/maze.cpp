@@ -23,7 +23,15 @@ SquareMaze::SquareMaze(){
 * @param height The height of the SquareMaze (number of cells)
 */
 void SquareMaze::makeMaze(int width, int height){
-    
+    width_ = width;
+    height_ = height;
+    size_ = width * height;
+    sets.addelements(size_);
+    rdwalls = std::vector<std::pair<bool, bool>>(size_, {true, true});
+    while(sets.size(0) != size_){
+        
+    }
+
 }
 
 /**
@@ -69,7 +77,24 @@ bool SquareMaze::canTravel(int x, int y, Direction dir) const{
 * @param exists true if setting the wall to exist, false otherwise
 */
 void SquareMaze::setWall(int x, int y, Direction dir, bool exists){
-
+    if(x >= width_ || y >= height_){
+        throw std::runtime_error("Invalid ceel in setWall().");
+    }
+    if(dir == 0 || dir == 1){
+        int idx = y*height_ + x;
+        if(idx >= size_ || idx < 0) throw std::runtime_error("Invalid ceel in setWall().");
+        //std::pair<bool, bool> origin = rdwalls[idx];
+        rdwalls[idx] = (dir == 0) ? std::make_pair(exists, rdwalls[idx].second) 
+                          : std::make_pair(rdwalls[idx].first, exists);
+    }else if(dir == 2){//LEFT
+        int idx = y*height_ + x - 1;
+        if(idx >= size_ || idx < 0) throw std::runtime_error("Invalid ceel in setWall().");
+        rdwalls[idx] = {exists, rdwalls[idx].second};
+    }else{//dir ==3, UP
+        int idx = (y - 1)*height_ + x;
+        if(idx >= size_ || idx < 0) throw std::runtime_error("Invalid ceel in setWall().");
+        rdwalls[idx] = {rdwalls[idx].first, exists};
+    }
 }
 
 /**

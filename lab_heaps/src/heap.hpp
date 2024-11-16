@@ -88,7 +88,6 @@ template <class T, class Compare>
 heap<T, Compare>::heap()
 {
     // @TODO Depending on your implementation, this function may or may
-    ///   not need modifying
     _elems.push_back(T());
 }
 
@@ -96,7 +95,6 @@ template <class T, class Compare>
 heap<T, Compare>::heap(const std::vector<T>& elems) 
 {
     // @TODO Construct a heap using the buildHeap algorithm
-    //std::sort(elems.begin(), elems.end());
     _elems.push_back(T());  // Add a dummy element to index 0, as heaps are usually 1-indexed
     for(const T& i : elems){
         _elems.push_back(i);
@@ -106,7 +104,6 @@ heap<T, Compare>::heap(const std::vector<T>& elems)
         heapifyUp(i);
     }
     */
-    
     for(size_t i = elems.size()/2; i >= 1; --i){
         heapifyDown(i);
     }
@@ -119,8 +116,7 @@ T heap<T, Compare>::pop()//reminMin
     // @TODO Remove, and return, the element with highest priority
     T minValue = _elems[1];
     _elems[1] = _elems[_elems.size() - 1];
-    //_elems[_elems.size() - 1] = nullptr;
-    _elems.pop_back();
+    _elems.pop_back();//automatically decrease the size of vector by one
     heapifyDown(1);
     return minValue;
 }

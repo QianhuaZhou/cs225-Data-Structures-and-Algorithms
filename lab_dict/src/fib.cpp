@@ -22,7 +22,9 @@ using std::map;
 unsigned long fib(unsigned long n)
 {
     /* Your code goes here! */
-    return 0;
+    if(n == 0) return 0;
+    if(n == 1) return 1;
+    return fib(n-1) + fib(n-2);
 }
 
 /**
@@ -34,5 +36,13 @@ unsigned long fib(unsigned long n)
 unsigned long memoized_fib(unsigned long n)
 {
     /* Your code goes here! */
-    return 0;
+    //note the use of keyword static to avoid add map a parameter to the function
+    static std::map<int, int> map{{0, 0}, {1, 1}};
+    auto it = map.find(n);
+    if(it != map.end()){//need calculate and insert it into map
+        return map[n];
+    }else{
+        map[n] = memoized_fib(n-1) + memoized_fib(n-2);
+    }
+    return map[n];
 }

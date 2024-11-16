@@ -44,16 +44,36 @@ void CommonWords::init_file_word_maps(const vector<string>& filenames)
 
     // go through all files
     for (size_t i = 0; i < filenames.size(); i++) {
-        // get the corresponding vector of words that represents the current
-        // file
+        // get the corresponding vector of words that represents the current file
         vector<string> words = file_to_vector(filenames[i]);
         /* Your code goes here! */
+        map<string, unsigned int> currMap;
+        for(string& word : words){
+            if(currMap.find(word) != currMap.end()){
+                currMap[word]++;
+            }else{
+                currMap[word] = 1;
+            }
+        }
+        file_word_maps[i] = currMap;
     }
 }
 
 void CommonWords::init_common()
 {
     /* Your code goes here! */
+    common = map<string, unsigned int>();
+    for(const auto& word_map : file_word_maps){
+        for(const auto& [key, value] : word_map){
+            common[key]++;//if not exists, will create with 0 as the initial value
+        }
+        // auto it = common.find(key);
+        // if(it != common.end()){
+        //     common[key]++ 
+        // }else{
+        //     common[key] = 1;
+        // }
+    }
 }
 
 /**
@@ -65,6 +85,19 @@ vector<string> CommonWords::get_common_words(unsigned int n) const
 {
     vector<string> out;
     /* Your code goes here! */
+    for(const auto& [key, value] : common){
+        bool valid = true;
+        if(value != file_word_maps.size()) continue;
+        for(const map<string, unsigned int>& word_map : file_word_maps){
+            //if(word_map[key] < n) continue; //oprator[] is not allowed for a const map
+            auto it = word_map.find(key);
+            if(it == word_map.end() || it->second < n){
+                valid = false;
+                break;
+            }
+        }
+        if(valid) out.push_back(key);
+    }
     return out;
 }
 
@@ -76,7 +109,6 @@ vector<string> CommonWords::file_to_vector(const string& filename) const
 {
     ifstream words(filename);
     vector<string> out;
-
     if (words.is_open()) {
         std::istream_iterator<string> word_iter(words);
         while (!words.eof()) {

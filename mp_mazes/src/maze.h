@@ -9,6 +9,7 @@
 #include <vector>
 #include "cs225/PNG.h"
 #include "cs225/HSLAPixel.h"
+#include "dsets.h"
 
 
 /**
@@ -174,5 +175,19 @@ public:
    */
   cs225::PNG *drawMazeWithSolution(int start);
 
-
+  private:
+    int height_;
+    int width_;
+    int size_;
+    DisjointSets sets;
+    std::vector<std::pair<bool, bool>> rdwalls;//<right, down>
 };
+
+/*
+struct wallRecord{
+  bool right;
+  bool down;
+  wallRecord(): right(true), down(true);
+  wallRecord(bool a, bool b): right(a), down(b);
+}
+*/

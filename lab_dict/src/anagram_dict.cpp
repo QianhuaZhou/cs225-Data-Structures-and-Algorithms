@@ -10,6 +10,7 @@
 
 #include <algorithm> /* I wonder why this is included... */
 #include <fstream>
+#include <iostream>
 
 using std::string;
 using std::vector;
@@ -23,6 +24,15 @@ using std::ifstream;
 AnagramDict::AnagramDict(const string& filename)
 {
     /* Your code goes here! */
+    std::ifstream input(filename);
+    string word;
+    string sorted;
+    if(!input.is_open()) throw std::runtime_error("Fail to open the file.");
+    while(input >> word){
+        sorted = word;
+        sort(sorted.begin(), sorted.end());
+        dict[sorted].push_back(word);
+    }
 }
 
 /**
@@ -32,6 +42,12 @@ AnagramDict::AnagramDict(const string& filename)
 AnagramDict::AnagramDict(const vector<string>& words)
 {
     /* Your code goes here! */
+    for(const string& word : words){
+        string sorted = word;
+        sort(sorted.begin(), sorted.end());
+        std::cout << "sorted = " << sorted << " word = " << word << std::endl;
+        dict[sorted].push_back(word);
+    }
 }
 
 /**
@@ -43,6 +59,10 @@ AnagramDict::AnagramDict(const vector<string>& words)
 vector<string> AnagramDict::get_anagrams(const string& word) const
 {
     /* Your code goes here! */
+    string temp = word;
+    sort(temp.begin(), temp.end());
+    auto it = dict.find(temp);//can't direcly use word here, not sure why
+    if(it != dict.end()) return it->second;//dict--const, can't use operator []
     return vector<string>();
 }
 
@@ -55,5 +75,9 @@ vector<string> AnagramDict::get_anagrams(const string& word) const
 vector<vector<string>> AnagramDict::get_all_anagrams() const
 {
     /* Your code goes here! */
-    return vector<vector<string>>();
+    vector<vector<string>> ret;
+    for(const auto& [str, vec] : dict){
+        if(vec.size() > 1) ret.push_back(vec);
+    }
+    return ret;
 }
