@@ -3,7 +3,9 @@
 #include "maze.h"
 
 SquareMaze::SquareMaze(){
-
+    width_ = 0;
+    height_ = 0;
+    size_ = 0;
 }
 
 /**
@@ -27,11 +29,44 @@ void SquareMaze::makeMaze(int width, int height){
     height_ = height;
     size_ = width * height;
     sets.addelements(size_);
-    rdwalls = std::vector<std::pair<bool, bool>>(size_, {true, true});
-    while(sets.size(0) != size_){
-        
+    for(int & i : sets.set){
+        std::cout << i << " ";
     }
-
+    std::cout << std::endl;
+    //std::cout << __LINE__ << " sets.findRoot(1) = " << sets.findRoot(1) << std::endl;
+    rdwalls = std::vector<std::pair<bool, bool>>(size_, {true, true});
+    int count = 0;
+    while(sets.size(0) != size_ && count++ < 10){
+         for(int & i : sets.set){
+            std::cout << i << " ";
+        }
+        std::cout << std::endl;
+        int X = rand() % width_;//[0, width_ - 1].
+        int Y = rand() % height_;
+        int dir = rand() % 2;
+        int cur = X + Y * width_;
+        int atRight = (X + 1) + Y * width_;
+        int atDown = X + (Y + 1) * width_;
+        if(dir == 0){
+            if (X != width_ - 1) {
+                std::cout << __LINE__ << " cur = " << cur << " atRight = " << atRight << " sets.findRoot(cur)= " << sets.findRoot(cur) << " sets.findRoot(atRight) = " << sets.findRoot(atRight) << std::endl;
+                if (sets.findRoot(cur) != sets.findRoot(atRight)) {
+                    setWall(X, Y, RIGHT, false);
+                    sets.setunion(cur, atRight);
+                }
+            }
+        } else { //down 
+            if (Y != height_ - 1) {
+                std::cout << __LINE__ <<  " cur = " << cur << " atDown = " << atDown << " sets.findRoot(cur)= " << sets.findRoot(cur) << " sets.findRoot(atDown) = " << sets.findRoot(atDown) << std::endl;
+                if (sets.findRoot(cur) != sets.findRoot(atDown)) {
+                    setWall(X, Y, DOWN, false);
+                    sets.setunion(cur, atDown);
+                }
+            }
+        }
+    
+    }
+//std::vector<std::pair<bool, bool>> rdwalls;//<right, down>
 }
 
 /**
@@ -55,6 +90,22 @@ void SquareMaze::makeMaze(int width, int height){
 * @return whether you can travel in the specified direction
 */
 bool SquareMaze::canTravel(int x, int y, Direction dir) const{
+    if(x >= width_ || y >= height_){
+        return false;
+    }
+    if(dir == 0 || dir == 1){
+        int idx = y*height_ + x;
+        if(idx >= size_ || idx < 0) return false;
+        //rdwalls[idx] = (dir == 0) ? std::make_pair(exists, rdwalls[idx].second) : std::make_pair(rdwalls[idx].first, exists);
+    }else if(dir == 2){//LEFT
+        int idx = y*height_ + x - 1;
+        if(idx >= size_ || idx < 0) return false;
+        //rdwalls[idx] = {exists, rdwalls[idx].second};
+    }else{//dir ==3, UP
+        int idx = (y - 1)*height_ + x;
+        if(idx >= size_ || idx < 0) return false;
+        //rdwalls[idx] = {rdwalls[idx].first, exists};
+    }
     return true;
 }
 
@@ -77,24 +128,9 @@ bool SquareMaze::canTravel(int x, int y, Direction dir) const{
 * @param exists true if setting the wall to exist, false otherwise
 */
 void SquareMaze::setWall(int x, int y, Direction dir, bool exists){
-    if(x >= width_ || y >= height_){
-        throw std::runtime_error("Invalid ceel in setWall().");
-    }
-    if(dir == 0 || dir == 1){
-        int idx = y*height_ + x;
-        if(idx >= size_ || idx < 0) throw std::runtime_error("Invalid ceel in setWall().");
-        //std::pair<bool, bool> origin = rdwalls[idx];
-        rdwalls[idx] = (dir == 0) ? std::make_pair(exists, rdwalls[idx].second) 
+    int idx = y*height_ + x;
+    rdwalls[idx] = (dir == 0) ? std::make_pair(exists, rdwalls[idx].second) 
                           : std::make_pair(rdwalls[idx].first, exists);
-    }else if(dir == 2){//LEFT
-        int idx = y*height_ + x - 1;
-        if(idx >= size_ || idx < 0) throw std::runtime_error("Invalid ceel in setWall().");
-        rdwalls[idx] = {exists, rdwalls[idx].second};
-    }else{//dir ==3, UP
-        int idx = (y - 1)*height_ + x;
-        if(idx >= size_ || idx < 0) throw std::runtime_error("Invalid ceel in setWall().");
-        rdwalls[idx] = {rdwalls[idx].first, exists};
-    }
 }
 
 /**
@@ -171,3 +207,4 @@ cs225::PNG *SquareMaze::drawMazeWithSolution(int start){
     // 在这里对 `image` 进行操作，例如设置图像内容
     return image;
 }
+

@@ -126,6 +126,7 @@ void assert_maze_acyclic(SquareMaze &maze, int width, int height)
     pair<int, int> checks = assert_maze_helper(maze, width, height);
     int components = checks.first;
     int calls = checks.second;
+    std::cout << __LINE__ << " calls + components = " << calls + components << std::endl;
     if (calls + components != width * height * 2)
         FAIL("Maze has a cycle");
 }
@@ -144,6 +145,7 @@ void assert_maze_tree(SquareMaze &maze, int width, int height)
     pair<int, int> checks = assert_maze_helper(maze, width, height);
     int components = checks.first;
     int calls = checks.second;
+    std::cout << __LINE__ << " calls + components = " << calls + components << std::endl;
     if (calls + components != width * height * 2)
         FAIL("Maze has a cycle");
     if (components != 1)
@@ -195,7 +197,16 @@ void advancePosition(int *x, int *y, int dir)
 TEST_CASE("testMakeSmallMaze", "[weight=10][part2]")
 {
     SquareMaze maze;
+    std::cout << __LINE__ << std::endl;
     maze.makeMaze(2, 2);
+    
+    //DisjointSets sets;
+    //std::vector<int> set;
+    //DisjointSets& gainSets
+    for(int & i : maze.gainSets().set){
+        std::cout << i << " ";
+    }
+    std::cout << std::endl;
     assert_maze_tree(maze, 2, 2);
 }
 

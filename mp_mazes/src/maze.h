@@ -175,6 +175,9 @@ public:
    */
   cs225::PNG *drawMazeWithSolution(int start);
 
+  //helper
+  DisjointSets& gainSets(){return sets;}
+
   private:
     int height_;
     int width_;

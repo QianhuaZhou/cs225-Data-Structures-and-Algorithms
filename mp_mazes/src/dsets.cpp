@@ -18,11 +18,19 @@ void DisjointSets::addelements(int num){
     *  element resides.
     */
 int DisjointSets::find(int elem){
+    //std::cout << __LINE__ << "set[elem] ="  << set[elem] << std::endl;
     if(set[elem] < 0) return elem;
     //path compress: connect current note to root
     set[elem] = find(set[elem]);
     return set[elem];
     //return find(set[elem]);
+}
+
+int DisjointSets::findRoot(int elem){
+    //std::cout << __LINE__ << "set[elem] ="  << set[elem] << std::endl;
+    if(set[elem] < 0) return elem;
+    set[elem] = find(set[elem]);
+    return set[elem];
 }
 
  

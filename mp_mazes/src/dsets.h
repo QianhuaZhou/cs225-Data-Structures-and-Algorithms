@@ -75,6 +75,9 @@ class DisjointSets
      */
     int getValue(int elem) const;
 
+    
+    int findRoot(int elem);
+
     std::vector<int> set;
 
 };
