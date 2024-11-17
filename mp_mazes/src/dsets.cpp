@@ -26,13 +26,6 @@ int DisjointSets::find(int elem){
     //return find(set[elem]);
 }
 
-int DisjointSets::findRoot(int elem){
-    //std::cout << __LINE__ << "set[elem] ="  << set[elem] << std::endl;
-    if(set[elem] < 0) return elem;
-    set[elem] = find(set[elem]);
-    return set[elem];
-}
-
  
 
 /**

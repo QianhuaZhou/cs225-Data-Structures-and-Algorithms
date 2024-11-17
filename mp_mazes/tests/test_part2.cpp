@@ -126,7 +126,7 @@ void assert_maze_acyclic(SquareMaze &maze, int width, int height)
     pair<int, int> checks = assert_maze_helper(maze, width, height);
     int components = checks.first;
     int calls = checks.second;
-    std::cout << __LINE__ << " calls + components = " << calls + components << std::endl;
+    //std::cout << __LINE__ << " calls + components = " << calls + components << std::endl;
     if (calls + components != width * height * 2)
         FAIL("Maze has a cycle");
 }
@@ -145,7 +145,7 @@ void assert_maze_tree(SquareMaze &maze, int width, int height)
     pair<int, int> checks = assert_maze_helper(maze, width, height);
     int components = checks.first;
     int calls = checks.second;
-    std::cout << __LINE__ << " calls + components = " << calls + components << std::endl;
+    //std::cout << __LINE__ << " calls + components = " << calls + components << std::endl;
     if (calls + components != width * height * 2)
         FAIL("Maze has a cycle");
     if (components != 1)
@@ -197,16 +197,16 @@ void advancePosition(int *x, int *y, int dir)
 TEST_CASE("testMakeSmallMaze", "[weight=10][part2]")
 {
     SquareMaze maze;
-    std::cout << __LINE__ << std::endl;
+    //std::cout << __LINE__ << std::endl;
     maze.makeMaze(2, 2);
     
     //DisjointSets sets;
     //std::vector<int> set;
     //DisjointSets& gainSets
-    for(int & i : maze.gainSets().set){
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
+    // for(int & i : maze.gainSets().set){
+    //     std::cout << i << " ";
+    // }
+    // std::cout << std::endl;
     assert_maze_tree(maze, 2, 2);
 }
 
@@ -328,7 +328,7 @@ void helpSolveMaze(const MazeReader &soln)
     vector<Direction> solution = maze.solveMaze(0);
 
     cout << "first 10 steps in solution:" << endl;
-    for (size_t i = 0; i < solution.size() && i < soln.getSolutionSize() && i < 10; i++)
+    for (size_t i = 0; i < solution.size() && i < soln.getSolutionSize(); i++)
         cout << "step " << i << ": actual=" << solution[i] << ", expected=" << soln.getSolutionAt(i) << endl;
 
     REQUIRE(soln.getSolutionSize() == solution.size());
@@ -412,6 +412,28 @@ TEST_CASE("testDrawSolutionLarge", "[weight=10][part2][timeout=30000]")
 }
 
 // new test cases 10/5/24
+void compareImages(const PNG& img1, const PNG& img2) {
+    if (img1.width() != img2.width() || img1.height() != img2.height()) {
+        std::cout << "Images have different dimensions!" << std::endl;
+        return;
+    }
+    for (unsigned x = 0; x < img1.width(); ++x) {
+        for (unsigned y = 0; y < img1.height(); ++y) {
+            const HSLAPixel& p1 = img1.getPixel(x, y);
+            const HSLAPixel& p2 = img2.getPixel(x, y);
+            if (!(p1 == p2)) {
+                std::cout << "Pixel mismatch at (" << x << ", " << y << "): "
+                          << "p1 = (" << p1.h << ", " << p1.s << ", " << p1.l << ", " << p1.a << "), "
+                          << "p2 = (" << p2.h << ", " << p2.s << ", " << p2.l << ", " << p2.a << ")"
+                          << std::endl;
+                return;
+            }
+        }
+    }
+    std::cout << "Images match perfectly." << std::endl;
+}
+
+
 
 TEST_CASE("testDrawSolutionMedStartpoint", "[weight=10][part2]")
 {
@@ -422,6 +444,11 @@ TEST_CASE("testDrawSolutionMedStartpoint", "[weight=10][part2]")
     maze.solveMaze(7);
     PNG *actualOutput = maze.drawMazeWithSolution(7);
     actualOutput->writeToFile("testSquareStartPoint" + string("-actual.png"));
+    std::cout << *actualOutput << std::endl;
+    std::cout << solnImage << std::endl;
+    compareImages(*actualOutput, solnImage);
+
     REQUIRE(*actualOutput == solnImage);
     delete actualOutput;
 }
+

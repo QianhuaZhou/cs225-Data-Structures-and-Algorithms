@@ -29,18 +29,9 @@ void SquareMaze::makeMaze(int width, int height){
     height_ = height;
     size_ = width * height;
     sets.addelements(size_);
-    for(int & i : sets.set){
-        std::cout << i << " ";
-    }
-    std::cout << std::endl;
-    //std::cout << __LINE__ << " sets.findRoot(1) = " << sets.findRoot(1) << std::endl;
+    
     rdwalls = std::vector<std::pair<bool, bool>>(size_, {true, true});
-    int count = 0;
-    while(sets.size(0) != size_ && count++ < 10){
-         for(int & i : sets.set){
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
+    while(sets.size(0) != size_){
         int X = rand() % width_;//[0, width_ - 1].
         int Y = rand() % height_;
         int dir = rand() % 2;
@@ -49,16 +40,16 @@ void SquareMaze::makeMaze(int width, int height){
         int atDown = X + (Y + 1) * width_;
         if(dir == 0){
             if (X != width_ - 1) {
-                std::cout << __LINE__ << " cur = " << cur << " atRight = " << atRight << " sets.findRoot(cur)= " << sets.findRoot(cur) << " sets.findRoot(atRight) = " << sets.findRoot(atRight) << std::endl;
-                if (sets.findRoot(cur) != sets.findRoot(atRight)) {
+               //std::cout << __LINE__ << " cur = " << cur << " atRight = " << atRight << " sets.find(cur)= " << sets.find(cur) << " sets.find(atRight) = " << sets.find(atRight) << std::endl;
+                if (sets.find(cur) != sets.find(atRight)) {
                     setWall(X, Y, RIGHT, false);
                     sets.setunion(cur, atRight);
                 }
             }
         } else { //down 
             if (Y != height_ - 1) {
-                std::cout << __LINE__ <<  " cur = " << cur << " atDown = " << atDown << " sets.findRoot(cur)= " << sets.findRoot(cur) << " sets.findRoot(atDown) = " << sets.findRoot(atDown) << std::endl;
-                if (sets.findRoot(cur) != sets.findRoot(atDown)) {
+                //std::cout << __LINE__ <<  " cur = " << cur << " atDown = " << atDown << " sets.find(cur)= " << sets.find(cur) << " sets.find(atDown) = " << sets.find(atDown) << std::endl;
+                if (sets.find(cur) != sets.find(atDown)) {
                     setWall(X, Y, DOWN, false);
                     sets.setunion(cur, atDown);
                 }
@@ -66,7 +57,13 @@ void SquareMaze::makeMaze(int width, int height){
         }
     
     }
-//std::vector<std::pair<bool, bool>> rdwalls;//<right, down>
+    /*
+     std::cout << __LINE__ << "size = " << sets.set.size() << std::endl;
+    for(int & i : sets.set){
+            std::cout << i << " ";
+        }
+    std::cout << std::endl;
+    */
 }
 
 /**
@@ -90,23 +87,31 @@ void SquareMaze::makeMaze(int width, int height){
 * @return whether you can travel in the specified direction
 */
 bool SquareMaze::canTravel(int x, int y, Direction dir) const{
-    if(x >= width_ || y >= height_){
-        return false;
+    if (dir == 0) {
+        if (x < width_ - 1 && !rdwalls[x + y*width_].first) {
+            return true;
+        } 
     }
-    if(dir == 0 || dir == 1){
-        int idx = y*height_ + x;
-        if(idx >= size_ || idx < 0) return false;
-        //rdwalls[idx] = (dir == 0) ? std::make_pair(exists, rdwalls[idx].second) : std::make_pair(rdwalls[idx].first, exists);
-    }else if(dir == 2){//LEFT
-        int idx = y*height_ + x - 1;
-        if(idx >= size_ || idx < 0) return false;
-        //rdwalls[idx] = {exists, rdwalls[idx].second};
-    }else{//dir ==3, UP
-        int idx = (y - 1)*height_ + x;
-        if(idx >= size_ || idx < 0) return false;
-        //rdwalls[idx] = {rdwalls[idx].first, exists};
+
+    if (dir == 1) {
+        if (y < height_ - 1 && !rdwalls[x + y*width_].second) {
+            return true;
+        } 
     }
-    return true;
+
+    if (dir == 2) {
+        if (x > 0 && !rdwalls[(x - 1) + y*width_].first) {
+            return true;
+        }
+    }
+
+    if (dir == 3) {
+        if (y > 0 && !rdwalls[x + (y - 1)*width_].second) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 /**
@@ -155,7 +160,64 @@ void SquareMaze::setWall(int x, int y, Direction dir, bool exists){
 * @return a vector of directions taken to solve the maze
 */
 std::vector<Direction> SquareMaze::solveMaze(int startX){
-    return std::vector<Direction>();
+    std::queue<int> q;
+    std::vector<int> length(size_, -1);
+    std::vector<Direction> path(size_);
+    std::vector<int> previous(size_, -1);
+    q.push(startX);
+    length[startX] = 0;
+    while(!q.empty()){
+        int currIdx = q.front();
+        int X = currIdx % width_;
+        int Y = currIdx / width_;
+        if(currIdx + 1 < size_ && canTravel(X, Y, RIGHT) && length[currIdx + 1] == -1){
+            length[currIdx + 1] = length[currIdx] + 1;
+            path[currIdx+ 1] = RIGHT;
+            previous[currIdx + 1] = currIdx;
+            q.push(currIdx + 1);
+        }
+
+        if(currIdx + width_ < size_ && canTravel(X, Y, DOWN) && length[currIdx + width_] == -1){
+            length[currIdx + width_] = length[currIdx] + 1;
+            path[currIdx + width_] = DOWN;
+            previous[currIdx + width_] = currIdx;
+            q.push(currIdx + width_);
+        }
+        
+        if(currIdx - 1 >= 0 && canTravel(X, Y, LEFT) && length[currIdx - 1] == -1){
+
+            length[currIdx - 1] = length[currIdx] + 1;
+            path[currIdx - 1] = LEFT;
+            previous[currIdx - 1] = currIdx;
+            q.push(currIdx - 1);
+        }
+
+        if(currIdx - width_ >= 0 && canTravel(X, Y, UP) && length[currIdx - width_] == -1){
+
+            length[currIdx - width_] = length[currIdx] + 1;
+            path[currIdx - width_] = UP;
+            previous[currIdx - width_] = currIdx;
+            q.push(currIdx - width_);
+        }
+        q.pop();
+    }
+    int maxLength = 0;
+    int maxIdx = 0;
+    for(int i = 0; i < width_; ++i){
+        if(length[(height_ - 1) * width_ + i] > maxLength){
+            maxIdx = (height_ - 1) * width_ + i;
+            maxLength = length[maxIdx];
+        }
+    }
+    int solX = maxIdx % width_;
+    int solY = maxIdx / width_;
+    std::vector<Direction> longestPath;
+    while(maxIdx != startX){
+        longestPath.push_back(path[maxIdx]);
+        maxIdx = previous[maxIdx];
+    }
+    std::reverse(longestPath.begin(), longestPath.end());
+    return longestPath;
 }
 
 /**
@@ -178,8 +240,28 @@ std::vector<Direction> SquareMaze::solveMaze(int startX){
 * @return a PNG of the unsolved SquareMaze
 */
 cs225::PNG *SquareMaze::drawMaze(int start) const{
-    cs225::PNG* image = new cs225::PNG();
-    // 在这里对 `image` 进行操作，例如设置图像内容
+    cs225::PNG* image = new cs225::PNG(width_*10+1, height_*10+1);
+    for(int i = 0; i < height_*10 + 1; ++i){//topmost
+        image->getPixel(0, i).l = 0;
+    }
+    for(int i = 0; i < width_*10 + 1; ++i){//leftmost
+        if(i >= 10*start && i < 10*(1+start)) continue;
+        image->getPixel(i, 0).l = 0;
+    }
+    for(int i = 0; i < static_cast<int>(rdwalls.size()); ++i){
+            int x = i % width_;
+            int y = i / width_;
+            if(rdwalls[i].first){
+                for(int k = 0; k <= 10; ++k){
+                    image->getPixel((x+1)*10, y*10+k).l = 0;
+                }
+            }
+            if(rdwalls[i].second){
+                for(int k = 0; k <= 10; ++k){
+                    image->getPixel(x*10+k, (y+1)*10).l = 0;
+                }
+            }
+    }
     return image;
 }
 
@@ -203,8 +285,39 @@ cs225::PNG *SquareMaze::drawMaze(int start) const{
 * @return a PNG of the solved SquareMaze
 */
 cs225::PNG *SquareMaze::drawMazeWithSolution(int start){
-    cs225::PNG* image = new cs225::PNG();
-    // 在这里对 `image` 进行操作，例如设置图像内容
+    cs225::PNG* image = drawMaze(start);
+    std::vector<Direction> dirs = solveMaze(start);
+    int currX = start*10 + 5;
+    int currY = 5;
+    for(Direction& dir : dirs){
+        if(dir == DOWN){
+            for(int k = 0; k < 11; k ++){
+                image->getPixel(currX, currY+k) = cs225::HSLAPixel(0, 1, 0.5, 1);
+            }
+            currY += 10;
+        }else if(dir == RIGHT){
+            for(int k = 0; k < 11; k ++){
+                image->getPixel(currX+k, currY) = cs225::HSLAPixel(0, 1, 0.5, 1);
+            }
+            currX += 10;
+        }else if(dir == UP){
+            for(int k = 0; k < 11; k ++){
+                image->getPixel(currX, currY-k) = cs225::HSLAPixel(0, 1, 0.5, 1);
+            }
+            currY -= 10;
+        }else if(dir == LEFT){
+            for(int k = 0; k < 11; k ++){
+                image->getPixel(currX-k, currY) = cs225::HSLAPixel(0, 1, 0.5, 1);
+            }
+            currX -= 10;
+        }
+    }
+    //std::cout << __LINE__ << " currX = " << currX << " currY = " << currX << std::endl;
+    currX -= 4;
+    currY += 5;
+    for(int k = 0; k < 9; ++k){
+        image->getPixel(currX+k, currY).l = 1;
+        image->getPixel(currX+k, currY).a = 1;
+    }
     return image;
 }
-

@@ -7,6 +7,8 @@
 #pragma once
 
 #include <vector>
+#include <queue>
+#include <algorithm>
 #include "cs225/PNG.h"
 #include "cs225/HSLAPixel.h"
 #include "dsets.h"
