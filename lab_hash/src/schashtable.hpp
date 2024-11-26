@@ -4,6 +4,7 @@
  */
 
 #include "schashtable.h"
+#include <iostream>
  
 template <class K, class V>
 SCHashTable<K, V>::SCHashTable(size_t tsize)
@@ -54,6 +55,11 @@ void SCHashTable<K, V>::insert(K const& key, V const& value)
      * @todo Implement this function.
      *
      */
+    elems++;
+    if(shouldResize()) resizeTable();
+    size_t idx = hashes::hash(key, size);
+    table[idx].push_back({key, value});
+
 }
 
 template <class K, class V>
@@ -61,12 +67,21 @@ void SCHashTable<K, V>::remove(K const& key)
 {
     typename std::list<std::pair<K, V>>::iterator it;
     /**
-     * @todo Implement this function.
-     *
-     * Please read the note in the lab spec about list iterators and the
-     * erase() function on std::list!
-     */
-    (void) key; // prevent warnings... When you implement this function, remove this line.
+    * @todo Implement this function.
+    *
+    * Please read the note in the lab spec about list iterators and the
+    * erase() function on std::list!
+    */
+    size_t idx = hashes::hash(key, size);
+    for(it = table[idx].begin(); it != table[idx].end(); ++it){
+        if(it->first == key){
+            table[idx].erase(it);
+            return;
+        }
+    }
+    //std::cout << "Attemp to remove no existed item." << std::endl;
+    elems--;
+    
 }
 
 template <class K, class V>
@@ -76,7 +91,13 @@ V SCHashTable<K, V>::find(K const& key) const
     /**
      * @todo: Implement this function.
      */
-
+    size_t idx = hashes::hash(key, size);
+    for(auto it = table[idx].begin(); it != table[idx].end(); ++it){
+        if(it->first == key){
+            return it->second;
+        }
+    }
+    std::cout << "Attemp to find no existed item." << std::endl;
     return V();
 }
 
@@ -134,4 +155,15 @@ void SCHashTable<K, V>::resizeTable()
      *
      * @hint Use findPrime()!
      */
+    size_t updatedSize = findPrime(2*size);
+    std::list<std::pair<K, V>>* newTable = new std::list<std::pair<K, V>>[updatedSize];//not equal to "(updatedSize)"
+    for(unsigned int idx = 0; idx < size; ++idx){   
+        for(it = table[idx].begin(); it != table[idx].end(); ++it){
+            size_t index = hashes::hash(it->first, updatedSize);
+            newTable[index].push_back(*it);
+        }
+    }
+    size = updatedSize;
+    delete[] table;
+    table = newTable;
 }

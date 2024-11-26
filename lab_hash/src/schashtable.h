@@ -7,6 +7,7 @@
 
 #include "hashtable.h"
 
+#include <iostream>
 #include <list>
 
 /**
@@ -79,6 +80,13 @@ public:
   iterator end() const
   {
     return makeIterator(new SCIteratorImpl(*this, size, true));
+  }
+
+  const std::list<std::pair<K, V>> *& gainTable() const{
+    return table;
+  }
+  std::list<std::pair<K, V>> *& gainTable(){
+    return table;
   }
 
 private:

@@ -17,6 +17,20 @@ size_t testBFS(std::vector<PuzzleState>& expected, bool animate = false) {
         animateSolution(expected, "solveBFS_expected.svg");
     }
 
+    
+    std::cout << "Solution: " << " solution.size() " << solution.size() << std::endl;
+    for (size_t i = 0; i < solution.size(); ++i) {
+            std::cout << solution[i] <<" ";
+    }
+    std::cout << std::endl;
+    
+    std::cout << "Expected: " <<  " expected.size()" << expected.size() << std::endl;
+    for (size_t i = 0; i < expected.size(); ++i) { 
+            std::cout << expected[i] <<" ";
+        
+    }
+    std::cout << std::endl;
+
     REQUIRE(solution.size() == expected.size());
     for (size_t i = 0; i < solution.size(); ++i) {
         REQUIRE(solution[i] == expected[i]);
@@ -40,8 +54,6 @@ size_t testAstar(std::vector<PuzzleState>& expected, bool animate = false) {
 
     return iterations;
 }
-
-
 
 TEST_CASE("BFS: Solve on solved puzzle", "[weight=1][part=2][BFS]") {
     std::vector<PuzzleState> expected = {PuzzleState()};

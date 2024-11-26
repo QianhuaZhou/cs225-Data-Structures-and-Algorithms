@@ -16,11 +16,15 @@ TEST_CASE("SC::testRemoveEASY", "[valgrind][weight=6]")
 	while (infile.good())
 	{
 		string word = infile.getNextWord();
+		std::cout << "word: " << word << std::endl;
 		hashTable.insert(word, 0);
 	}
 	hashTable.insert("__SENTINEL__", 0);
+	//std::cout << __LINE__ << "The size of the list is: " << hashTable.gainTable()->size() << std::endl;
+
 	if (!hashTable.keyExists("__SENTINEL__"))
 		FAIL("Insert did not work");
+	//std::cout << __LINE__ << "The size of the list is: " << hashTable.gainTable()->size() << std::endl;
 	hashTable.remove("all");
 	if (hashTable.keyExists("all"))
 		FAIL("Did not remove key: 'all'");

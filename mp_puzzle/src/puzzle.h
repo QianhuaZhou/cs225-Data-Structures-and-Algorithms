@@ -6,6 +6,12 @@
 #include <vector>
 #include <array>
 #include <iostream>
+#include <algorithm>
+#include <cmath>
+#include <queue>
+#include <unordered_set>
+#include <unordered_map>
+#include <map>
 
 class PuzzleState {
 public:
@@ -93,7 +99,18 @@ public:
     int manhattanDistance(const PuzzleState desiredState = PuzzleState()) const;
 
 
+    // const char (&gainMatrix() const)[4][4] {
+    //     return matrix;
+    // }
+
+    std::vector<char>& gainMatrix(){return matrix;}
+    const std::vector<char>& gainMatrix() const { return matrix; }
+
 private:
+
+    //char matrix[4][4];
+    std::vector<char> matrix;
+    std::pair<unsigned int, unsigned int> emptyIdx;
 };
 
 /**
