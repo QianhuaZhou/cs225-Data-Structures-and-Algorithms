@@ -233,3 +233,34 @@ TEST_CASE("Complicated manhattanDistance tests", "[weight=2][part=1]")
                           4, 3, 2, 1});
     REQUIRE(puzzle.manhattanDistance(solvedPuzzle) == 58);
 }
+
+
+
+
+
+
+
+TEST_CASE("operator< ", "[weight=1][part=1]")
+{
+    PuzzleState solved;
+    PuzzleState puzzle3({1, 2, 3, 4, 5, 6, 7, 7, 9, 10, 11, 12, 13, 14, 15, 0});
+    PuzzleState puzzle4({1, 2, 3, 4, 5, 6, 7, 9, 9, 10, 11, 12, 13, 14, 15, 0});
+    REQUIRE(puzzle3 < solved);
+    REQUIRE(solved < puzzle4);
+    
+    REQUIRE(!(solved < solved));
+}
+
+TEST_CASE("operator== ", "[weight=1][part=1]")
+{
+    PuzzleState puzzle1({0, 1,  2,  3,
+ 5,  9,  6,  4, 
+13, 10,  7,  8, 
+14, 15, 11, 12 });
+    PuzzleState puzzle2({0, 1,  2,  3,
+ 5,  9,  6,  4, 
+13, 10,  7,  8, 
+14, 15, 11, 12 });
+
+    REQUIRE(puzzle1 == puzzle2);
+}

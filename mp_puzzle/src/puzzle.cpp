@@ -3,7 +3,9 @@
  * Implementation of puzzle class.
  */
 #include "puzzle.h"
-
+#include <unordered_set>
+#include <set>
+#include <climits>
 /**
 * Default constructor for the puzzle state. This should initialize the
 * puzzle to the solved state.
@@ -69,12 +71,13 @@ std::array<char, 16> PuzzleState::asArray() const{
 * @param rhs The puzzle state to compare to
 */
 bool PuzzleState::operator==(const PuzzleState &rhs) const{
-    const std::vector<char>& m = gainMatrix();
-    const std::vector<char>& rhs_m = rhs.gainMatrix();
-    for(unsigned int i = 0; i < 16; ++i){
-        if(m[i] != rhs_m[i]) return false;
-    }
-    return true;
+    // const std::vector<char>& m = gainMatrix();
+    // const std::vector<char>& rhs_m = rhs.gainMatrix();
+    // for(unsigned int i = 0; i < 16; ++i){
+    //     if(m[i] != rhs_m[i]) return false;
+    // }
+    // return true;
+    return gainMatrix() == rhs.gainMatrix();
 }
 
 /**
@@ -92,16 +95,17 @@ bool PuzzleState::operator!=(const PuzzleState &rhs) const{
 * @param rhs The puzzle state to compare to
 */
 bool PuzzleState::operator<(const PuzzleState &rhs) const{
-    const std::vector<char>& m = gainMatrix();
-    const std::vector<char>& rhs_m = rhs.gainMatrix();
-    for(unsigned int i = 0; i < 16; ++i){
-        if(m[i] < rhs_m[i]){
-            return true;
-        }else if(m[i] < rhs_m[i]){
-            return false;
-        }
-    }
-    return false;
+    // const std::vector<char>& m = gainMatrix();
+    // const std::vector<char>& rhs_m = rhs.gainMatrix();
+    // for(unsigned int i = 0; i < 16; ++i){
+    //     if(m[i] < rhs_m[i]){
+    //         return true;
+    //     }else if(m[i] > rhs_m[i]){
+    //         return false;
+    //     }
+    // }
+    // return false;
+    return gainMatrix() < rhs.gainMatrix();
 }
 
 /**
@@ -192,49 +196,37 @@ std::vector<PuzzleState> solveBFS(const PuzzleState &startState, const PuzzleSta
     //DFS--stack
     std::vector<PuzzleState> ret;
     std::queue<PuzzleState> queue;
-    std::vector<PuzzleState> visited;
+    std::set<PuzzleState> visited; 
     std::map<PuzzleState, PuzzleState> parentMap;
+    size_t iterationCount = 0;
     queue.push(startState);
-    visited.push_back(startState);
-    parentMap[startState] = PuzzleState(std::array<char, 16>());
+    visited.insert(startState);
 
-    //int dis = startState.manhattanDistance(desiredState);
-    while(!queue.empty()){
+    while(!queue.empty()){    
+        iterationCount++;
         PuzzleState curr = queue.front();
         queue.pop();
-
         if(curr == desiredState){
             while(curr != startState){
                 ret.push_back(curr);
-                curr = parentMap[curr];
+                curr = parentMap.at(curr);
             }
+        
             ret.push_back(curr);
             std::reverse(ret.begin(), ret.end());
+            *iterations = iterationCount;
             return ret;
         }
-        std::cout << __LINE__ << std::endl;
         std::vector<PuzzleState> neighbors = curr.getNeighbors();
-        std::cout << __LINE__ << " neighbors.size() = " << neighbors.size() << std::endl;
         for(PuzzleState& neighbor : neighbors){
-            if(find(visited.begin(), visited.end(), neighbor) == visited.end()){
-                visited.push_back(neighbor);
-                parentMap[neighbor] = curr;
-                queue.push(neighbor);
+            if(visited.find(neighbor) == visited.end()){
+                visited.insert(neighbor); 
+                parentMap.insert({neighbor, curr});
+                queue.push(neighbor);     
             }
-            
-            //const std::vector<char>& m = neighbor.gainMatrix();
-            const std::array<char, 16>& m = neighbor.asArray();
-            for (size_t i = 0; i < 16; ++i) { 
-                std::cout << m[i] <<" ";
-                }
-            std::cout << std::endl;
         }
-        //std::cout << __LINE__ << " curr.manhattanDistance(desiredState): " << curr.manhattanDistance(desiredState) << "  dis = " << dis << std::endl;
-        //if(curr.manhattanDistance(desiredState) < dis){
-        //     ret.push_back(curr);
-        //     dis = curr.manhattanDistance(desiredState);
-        // }
     }
+    *iterations = iterationCount;
     return ret;
 }
 
@@ -251,7 +243,50 @@ std::vector<PuzzleState> solveBFS(const PuzzleState &startState, const PuzzleSta
 * state, and the last element is the desired state. Empty if no solution exists.
 */
 std::vector<PuzzleState> solveAstar(const PuzzleState& startState, const PuzzleState &desiredState, size_t *iterations){
-    return std::vector<PuzzleState>();
+     std::vector<PuzzleState> ret;
+    std::queue<PuzzleState> queue;
+    std::set<PuzzleState> visited; 
+    std::map<PuzzleState, PuzzleState> parentMap;
+    size_t iterationCount = 1;
+    queue.push(startState);
+    visited.insert(startState);
+    int dis = startState.manhattanDistance(desiredState);
+    while(!queue.empty()){
+
+        PuzzleState curr = queue.front();
+        queue.pop();
+        if(curr == desiredState){
+            while(curr != startState){
+                ret.push_back(curr);
+                curr = parentMap.at(curr);
+            }
+        
+            ret.push_back(curr);
+            std::reverse(ret.begin(), ret.end());
+            *iterations = iterationCount;
+            return ret;
+        }
+        
+        std::vector<PuzzleState> neighbors = curr.getNeighbors();
+        PuzzleState next;
+        int minDis = INT_MAX;
+        for(PuzzleState& neighbor : neighbors){
+            int currDis = neighbor.manhattanDistance(desiredState);
+            if(currDis < minDis){
+                minDis = currDis;
+                next = neighbor;
+            }
+            
+        }
+
+        iterationCount++;
+        visited.insert(next); 
+        parentMap.insert({next, curr});
+        queue.push(next);     
+
+    }
+    *iterations = iterationCount;
+    return ret;
 }
 
 

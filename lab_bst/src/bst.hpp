@@ -22,23 +22,6 @@ struct BST<K, V>::Node* & BST<K, V>::find(Node* & subtree, const K& key)
     if(subtree == nullptr || subtree->key == key) return subtree;
     if(subtree->key > key) return find(subtree->left, key);
     return find(subtree->right, key);
-    
-     /*
-     //cannot figure out why it is not correct
-    Node*& curr = subtree;//no difference with directly use subtree
-    while(curr != nullptr){
-        if(curr->key < key ){
-            curr = curr->right;
-            
-        }else if(curr->key > key){
-            curr = curr->left;
-           
-        }else{
-            return curr;
-        }
-    }
-    return subtree;
-*/
    
 }
 
@@ -46,12 +29,6 @@ template <class K, class V>
 void BST<K, V>::insert(const K & key, const V & value)
 {
     // your code here
-    /*
-    std::ostringstream oss;
-    oss << "insert(" << key << ", " << value << ")";
-    functionCalls.push_back(oss.str());
-
-    */
     
     insert(root, key, value);
 }
@@ -65,22 +42,6 @@ void BST<K, V>::insert(Node*& subtree, const K& key, const V& value)
     if(position == nullptr){
         position = new Node(key, value);
     }
-  
-    /*
-    if(key < position->key){
-        position->left  = newNode;
-        std::cout << __LINE__ << " key = " << key << std::endl;
-    }else if(key > position->key){
-        position->right = newNode;
-        std::cout << __LINE__ << " key = " << key << std::endl;
-    }else{
-        std::cout << __LINE__ << " key = " << key << std::endl;
-        return;
-    }
-    //subtree->printFunctionOrder(std::cout);
-    std::cout << __LINE__ << " key = " << key << std::endl;
-    */
-
 
 }
 

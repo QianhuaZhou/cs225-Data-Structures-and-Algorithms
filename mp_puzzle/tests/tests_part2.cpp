@@ -18,18 +18,18 @@ size_t testBFS(std::vector<PuzzleState>& expected, bool animate = false) {
     }
 
     
-    std::cout << "Solution: " << " solution.size() " << solution.size() << std::endl;
-    for (size_t i = 0; i < solution.size(); ++i) {
-            std::cout << solution[i] <<" ";
-    }
-    std::cout << std::endl;
+    // std::cout << "Solution: " << " solution.size() " << solution.size() << std::endl;
+    // for (size_t i = 0; i < solution.size(); ++i) {
+    //         std::cout << solution[i] <<" ";
+    // }
+    // std::cout << std::endl;
     
-    std::cout << "Expected: " <<  " expected.size()" << expected.size() << std::endl;
-    for (size_t i = 0; i < expected.size(); ++i) { 
-            std::cout << expected[i] <<" ";
+    // std::cout << "Expected: " <<  " expected.size()" << expected.size() << std::endl;
+    // for (size_t i = 0; i < expected.size(); ++i) { 
+    //         std::cout << expected[i] <<" ";
         
-    }
-    std::cout << std::endl;
+    // }
+    // std::cout << std::endl;
 
     REQUIRE(solution.size() == expected.size());
     for (size_t i = 0; i < solution.size(); ++i) {
@@ -69,6 +69,9 @@ TEST_CASE("BFS: Easy solve", "[weight=2][part=2][BFS]") {
         }),
         PuzzleState()
     };
+    
+    testBFS(expected1);
+
     std::vector<PuzzleState> expected2 = {PuzzleState({
             1,  2,  3,  0,
             5,  6,  7,  4,
@@ -88,11 +91,10 @@ TEST_CASE("BFS: Easy solve", "[weight=2][part=2][BFS]") {
         PuzzleState()
     };
 
-    testBFS(expected1);
     testBFS(expected2);
 }
 
-TEST_CASE("BFS: Spiral test", "[weight=2][part=2][BFS][timeout=60000]") {
+TEST_CASE("BFS: Spiral test", "[weight=2][part=2][BFS][timeout=30]") {
     std::vector<PuzzleState> expected = {
         PuzzleState({5, 1, 2, 3, 9, 10, 6, 4, 13, 0, 7, 8, 14, 15, 11, 12}),
         PuzzleState({5, 1, 2, 3, 9, 0, 6, 4, 13, 10, 7, 8, 14, 15, 11, 12}),
@@ -112,7 +114,7 @@ TEST_CASE("BFS: Spiral test", "[weight=2][part=2][BFS][timeout=60000]") {
         PuzzleState({1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 0})
     };
 
-    testBFS(expected, true);
+    testBFS(expected);
 }
 
 TEST_CASE("BFS: Correct number of iterations", "[weight=1][part=2][valgrind][BFS]") {
@@ -171,7 +173,6 @@ TEST_CASE("A*: Easy solve", "[weight=2][part=2][A*]") {
         }),
         PuzzleState()
     };
-
     testAstar(expected1);
     testAstar(expected2);
 }
