@@ -3,9 +3,15 @@
  * Implementation of puzzle class.
  */
 #include "puzzle.h"
-#include <unordered_set>
 #include <set>
 #include <climits>
+#include <iostream>
+#include <queue>
+#include <vector>
+#include <functional>
+#include <algorithm>
+#include <limits>
+
 /**
 * Default constructor for the puzzle state. This should initialize the
 * puzzle to the solved state.
@@ -191,103 +197,119 @@ int PuzzleState::manhattanDistance(const PuzzleState desiredState) const{
 * @return The path to the solution. The first element of the vector is the start
 * state, and the last element is the desired state. Empty if no solution exists.
 */
-std::vector<PuzzleState> solveBFS(const PuzzleState &startState, const PuzzleState &desiredState, size_t *iterations){
-    //BFS--queue
-    //DFS--stack
-    std::vector<PuzzleState> ret;
-    std::queue<PuzzleState> queue;
-    std::set<PuzzleState> visited; 
-    std::map<PuzzleState, PuzzleState> parentMap;
+
+
+std::vector<PuzzleState> solveBFS(const PuzzleState& startState, const PuzzleState& desiredState, size_t* iterations) {
+    // Queue for BFS
+    std::queue<PuzzleState> frontier;
+
+    // Maps to track visited states and reconstruct the path
+    std::map<PuzzleState, PuzzleState> came_from;
+    std::set<PuzzleState> visited;
+
+    // Initialize the frontier
+    frontier.push(startState);
+    visited.insert(startState);
+    came_from[startState] = PuzzleState(); // Empty parent for the start state
+
     size_t iterationCount = 0;
-    queue.push(startState);
-    visited.insert(startState);
+    if (iterations != nullptr) {
+        *iterations = 0;
+    }
 
-    while(!queue.empty()){    
+    while (!frontier.empty()) {
+        // Increment iteration count
         iterationCount++;
-        PuzzleState curr = queue.front();
-        queue.pop();
-        if(curr == desiredState){
-            while(curr != startState){
-                ret.push_back(curr);
-                curr = parentMap.at(curr);
-            }
-        
-            ret.push_back(curr);
-            std::reverse(ret.begin(), ret.end());
+        if (iterations != nullptr) {
             *iterations = iterationCount;
-            return ret;
         }
-        std::vector<PuzzleState> neighbors = curr.getNeighbors();
-        for(PuzzleState& neighbor : neighbors){
-            if(visited.find(neighbor) == visited.end()){
-                visited.insert(neighbor); 
-                parentMap.insert({neighbor, curr});
-                queue.push(neighbor);     
+
+        // Get the current state
+        PuzzleState current = frontier.front();
+        frontier.pop();
+
+        // If the goal is reached, reconstruct the path
+        if (current == desiredState) {
+            std::vector<PuzzleState> path;
+            while (current != startState) {
+                path.push_back(current);
+                current = came_from[current];
+            }
+            path.push_back(startState);
+            std::reverse(path.begin(), path.end());
+            return path;
+        }
+
+        // Explore neighbors
+        for (const PuzzleState& next : current.getNeighbors()) {
+            if (visited.find(next) == visited.end()) {
+                // Mark as visited
+                visited.insert(next);
+
+                // Add to the frontier
+                frontier.push(next);
+
+                // Record the path
+                came_from[next] = current;
             }
         }
     }
-    *iterations = iterationCount;
-    return ret;
+
+    // Return an empty vector if no solution is found
+    return {};
 }
 
-/**
-* Solves the puzzle using A* with manhattan distance as a heuristic.
-* @param startState The starting state of the puzzle
-* @param desiredState The final goal state of the puzzle after solving
-* @param iterations The number of iterations it took to solve the puzzle. An
-* iteration is defined as the number of times a state is popped from the data
-* structure (NOTE: this should include the start and desired states, but not any
-* states that are immediately discarded, if applicable). We will use the value
-* stored at this pointer to evaluate efficiency. Ignore if NULL.
-* @return The path to the solution. The first element of the vector is the start
-* state, and the last element is the desired state. Empty if no solution exists.
-*/
-std::vector<PuzzleState> solveAstar(const PuzzleState& startState, const PuzzleState &desiredState, size_t *iterations){
-     std::vector<PuzzleState> ret;
-    std::queue<PuzzleState> queue;
-    std::set<PuzzleState> visited; 
-    std::map<PuzzleState, PuzzleState> parentMap;
-    size_t iterationCount = 1;
-    queue.push(startState);
-    visited.insert(startState);
-    int dis = startState.manhattanDistance(desiredState);
-    while(!queue.empty()){
 
-        PuzzleState curr = queue.front();
-        queue.pop();
-        if(curr == desiredState){
-            while(curr != startState){
-                ret.push_back(curr);
-                curr = parentMap.at(curr);
-            }
-        
-            ret.push_back(curr);
-            std::reverse(ret.begin(), ret.end());
-            *iterations = iterationCount;
-            return ret;
-        }
-        
-        std::vector<PuzzleState> neighbors = curr.getNeighbors();
-        PuzzleState next;
-        int minDis = INT_MAX;
-        for(PuzzleState& neighbor : neighbors){
-            int currDis = neighbor.manhattanDistance(desiredState);
-            if(currDis < minDis){
-                minDis = currDis;
-                next = neighbor;
-            }
-            
-        }
+std::vector<PuzzleState> solveAstar(const PuzzleState& startState, const PuzzleState& desiredState, size_t* iterations) {
+    using StatePriority = std::pair<PuzzleState, int>;
+    auto compare = [](const StatePriority& a, const StatePriority& b) {
+        return a.second > b.second; // Min-heap: smallest priority first
+    };
+    std::priority_queue<StatePriority, std::vector<StatePriority>, decltype(compare)> frontier(compare);
 
-        iterationCount++;
-        visited.insert(next); 
-        parentMap.insert({next, curr});
-        queue.push(next);     
+    frontier.push({startState, 0});
 
+    std::map<PuzzleState, PuzzleState> came_from;
+    std::map<PuzzleState, int> cost_so_far;
+
+    came_from[startState] = PuzzleState();
+    cost_so_far[startState] = 0;
+
+    size_t iterationCount = 0;
+    if (iterations != nullptr) {
+        *iterations = 0;
     }
-    *iterations = iterationCount;
-    return ret;
+
+    while (!frontier.empty()) {
+        iterationCount++;
+        if (iterations != nullptr) {
+            *iterations = iterationCount;
+        }
+        PuzzleState current = frontier.top().first;
+        frontier.pop();
+        if (current == desiredState) {
+            std::vector<PuzzleState> path;
+            while (current != startState) {
+                path.push_back(current);
+                current = came_from[current];
+            }
+            path.push_back(startState);
+            std::reverse(path.begin(), path.end());
+            return path;
+        }
+
+        for (const PuzzleState& next : current.getNeighbors()) {
+            //std::cout << next << std::endl;
+            int new_cost = cost_so_far[current] + 1; 
+            if (cost_so_far.find(next) == cost_so_far.end() || new_cost < cost_so_far[next]) {
+                cost_so_far[next] = new_cost;
+                int priority = new_cost + next.manhattanDistance(desiredState);
+
+                frontier.push({next, priority});
+
+                came_from[next] = current;
+            }
+        }
+    }
+    return {};
 }
-
-
-

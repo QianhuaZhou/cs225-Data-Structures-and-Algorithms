@@ -13,8 +13,10 @@
 #include <unordered_map>
 #include <map>
 
+
 class PuzzleState {
 public:
+
     enum class Direction {
         UP,   // Refers to moving a tile up (i.e. the empty space goes down.)
         DOWN, // Refers to moving a tile down (i.e. the empty space goes up.)
