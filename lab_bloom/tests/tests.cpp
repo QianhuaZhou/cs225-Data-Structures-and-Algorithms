@@ -393,6 +393,7 @@ TEST_CASE("test_bitfrombyte", "[weight=1]") {
         bool u1 = getBitFromByte(static_cast<char>(tmp),i);
         bool u2 = getBitFromByte(static_cast<char>(tmp2),i);
         bool u3 = getBitFromByte(static_cast<char>(tmp3),i);
+        std::cout << "i = " << i << std::endl;
         bool u4 = getBitFromByte(static_cast<char>(tmp4),i);
         bool u5 = getBitFromByte(static_cast<char>(tmp5),i);
 
@@ -419,9 +420,9 @@ TEST_CASE("test_bitfromarray", "[weight=1]") {
 
     std::vector<char> q1 = {static_cast<char>(tmp2), static_cast<char>(tmp4)};
     std::vector<bool> qa1 = {1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1};
+
     for(int i = 0; i < 16; i++){
         bool user = getBitFromArray(q1,i);
-
         REQUIRE(user == qa1[i]);
     }
 

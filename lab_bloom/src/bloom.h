@@ -82,8 +82,9 @@ class BF
      */
     void intersect(const BF& other);
 
-    std::vector<hashFunction> hv;
-    std::vector<bool> bv;
+   std::vector<hashFunction> hv;
+   std::vector<bool> bv;
+   
 };
 
 /**
